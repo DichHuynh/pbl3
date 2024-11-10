@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Thêm classpath cho Google Services Plugin
+        classpath 'com.google.gms:google-services:4.4.2' // Sử dụng phiên bản phù hợp
+    }
+}
+
 allprojects {
     repositories {
         google()

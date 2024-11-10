@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "579691635333",
+    "project_id": "infras-management-a9ba8",
+    "storage_bucket": "infras-management-a9ba8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579691635333:android:4a8ad28b1a18a3782e7fec",
+        "android_client_info": {
+          "package_name": "com.example.pbl3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD9WWKrDlVW9abNhplfFkkRAgY_ES5H60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
