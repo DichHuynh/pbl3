@@ -1,8 +1,14 @@
+import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pbl3/source/userHome.dart';
 import 'package:pbl3/source/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,6 +20,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final ImagePicker _picker = ImagePicker();
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -21,6 +28,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _addressController = TextEditingController();
+
+  Uint8List? _avatar;
 
   @override
   void dispose() {
@@ -32,50 +41,89 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  Future<String?> _uploadImage(Uint8List imageBytes) async {
+    final cloudinaryUrl =
+        Uri.parse("https://api.cloudinary.com/v1_1/dy3gsgb0j/image/upload");
+    final request = http.MultipartRequest("POST", cloudinaryUrl);
+    request.fields['upload_preset'] = 'ml_default';
+
+    // Tạo MultipartFile từ Uint8List
+    request.files.add(http.MultipartFile.fromBytes('file', imageBytes,
+        filename: 'image.jpg'));
+
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      final responseData = await response.stream.bytesToString();
+      final jsonData = json.decode(responseData);
+      return jsonData['secure_url']; // URL của ảnh đã tải lên
+    } else {
+      if (response.statusCode != 200) {
+        final responseData = await response.stream.bytesToString();
+        print('Lỗi khi tải ảnh lên Cloudinary: ${response.statusCode}, Chi tiết: $responseData');
+        return null;
+      }
+    }
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      try{
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text, 
-          password: _passwordController.text,);
+      try {
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        // Kiểm tra tai ảnh đại diện và lấy url lưu vào store
+        String avatarUrl = '';
+        if (_avatar != null) {
+          try {
+            avatarUrl = await _uploadImage(_avatar!) ?? '';
+          } catch (e) {
+            print('Lỗi khi tải ảnh lên Cloudinary: $e');
+          }
+          ;
+        }
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'name': _nameController.text,
           'email': _emailController.text,
           'address': _addressController.text,
-    });
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        _showErrorDialog('The password too weak');
-    } else if (e.code == 'email-already-in-use'){
-      _showErrorDialog('Email already in use');
+          'avatar': avatarUrl,
+          'role': "user",
+          'createdAt': Timestamp.now(),
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UserHomePage()),
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          _showErrorDialog('The password too weak');
+        } else if (e.code == 'email-already-in-use') {
+          _showErrorDialog('Email already in use');
+        }
+      } catch (e) {
+        _showErrorDialog('Error creating account');
+      }
     }
-  } catch (e) {
-    _showErrorDialog('Error creating account');
   }
-}
-}
 
-void _showErrorDialog(String message){
-  showDialog(
-    context: context,
-    builder: (context){
-      return AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +148,16 @@ void _showErrorDialog(String message){
                 const SizedBox(height: 20),
                 _buildTextField(_nameController, 'Họ và tên', 'Nhập họ và tên'),
                 const SizedBox(height: 15),
-                _buildTextField(_emailController, 'Email', 'Nhập email', isEmail: true),
+                _buildTextField(_emailController, 'Email', 'Nhập email',
+                    isEmail: true),
                 const SizedBox(height: 15),
-                _buildTextField(_passwordController, 'Mật khẩu', 'Nhập mật khẩu', isPassword: true),
+                _buildTextField(
+                    _passwordController, 'Mật khẩu', 'Nhập mật khẩu',
+                    isPassword: true),
                 const SizedBox(height: 15),
-                _buildTextField(_confirmPasswordController, 'Nhập lại mật khẩu', 'Nhập lại mật khẩu', isPassword: true),
+                _buildTextField(_confirmPasswordController, 'Nhập lại mật khẩu',
+                    'Nhập lại mật khẩu',
+                    isPassword: true),
                 const SizedBox(height: 15),
                 _buildFilePickerButton('Chọn avatar'),
                 const SizedBox(height: 15),
@@ -114,7 +167,9 @@ void _showErrorDialog(String message){
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.symmetric(vertical: 15)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 15)),
                     child: const Text(
                       'Đăng ký',
                       style: TextStyle(fontSize: 16),
@@ -127,7 +182,7 @@ void _showErrorDialog(String message){
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginPage()),
+                          builder: (context) => const LoginPage()),
                     );
                   },
                   child: const Text(
@@ -143,7 +198,9 @@ void _showErrorDialog(String message){
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, String hint, {bool isPassword = false, bool isEmail = false}) {
+  Widget _buildTextField(
+      TextEditingController controller, String label, String hint,
+      {bool isPassword = false, bool isEmail = false}) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
@@ -166,14 +223,21 @@ void _showErrorDialog(String message){
 
   Widget _buildFilePickerButton(String label) {
     return OutlinedButton(
-      onPressed: () {
-        // Implement file picker functionality here
+      onPressed: () async {
+        final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          // Sử dụng phần mềm đọc file để lấy dữ liệu bytes
+          final byteData = await pickedFile.readAsBytes();
+          setState(() {
+            _avatar = byteData; // Thay đổi loại dữ liệu cho phù hợp
+          });
+        }
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label),
-          const Text('Không có tệp nào được chọn'),
+          Text(_avatar == null ? 'Không có tệp nào được chọn' : 'Tệp đã chọn'),
         ],
       ),
     );

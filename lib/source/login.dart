@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pbl3/source/userHome.dart';
+import 'package:pbl3/source/techHome.dart';
+import 'package:pbl3/source/adminHome.dart';
 import 'package:pbl3/source/signUp.dart';
 
 class MyApp extends StatelessWidget {
@@ -23,6 +28,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -42,14 +48,33 @@ class _LoginPageState extends State<LoginPage> {
         // _loginUser();
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),);
-        Navigator.push(
+          password: _passwordController.text.trim(),
+          );
+
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(userCredential.user!.uid).get();
+      String userRole = userDoc['role']; // Lấy vai trò
+
+      // Điều hướng dựa trên vai trò
+      if (userRole == 'admin') {
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ));
+          MaterialPageRoute(builder: (context) => const AdminHomePage()),
+        );
+      } else if (userRole == 'tech') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TechHomePage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const UserHomePage()),
+        );
+      }
       } on FirebaseAuthException catch(e){
         if (e.code == 'user-not-found') {
           print('No user found for that email.');
-        } else if (e.code == 'wrong-pasword'){
+        } else if (e.code == 'wrong-password'){
           print('Wrong password');
         } else {
           print('Error: $e');
