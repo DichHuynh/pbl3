@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:pbl3/source/userHome.dart';
-import 'package:pbl3/source/techHome.dart';
-import 'package:pbl3/source/adminHome.dart';
+import 'package:pbl3/source/user/userHome.dart';
+import 'package:pbl3/source/tech/techHome.dart';
+import 'package:pbl3/source/admin/adminHome.dart';
 import 'package:pbl3/source/signUp.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Hệ thống thông tin cơ sở hạ tầng',
       home: LoginPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -42,47 +43,77 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+
+void showErrorDialog(String errorMessage) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Lỗi'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog
+            },
+            child: const Text('Đóng'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      try{
-        // _loginUser();
+      try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
+        );
+
+        // Truy vấn dữ liệu người dùng từ Firestore
+        DocumentSnapshot userDoc = await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+        String userRole = userDoc['role']; // Vai trò người dùng
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>; // Thông tin người dùng
+
+        // Điều hướng dựa trên vai trò
+        if (userRole == 'admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminHomePage()),
           );
-
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(userCredential.user!.uid).get();
-      String userRole = userDoc['role']; // Lấy vai trò
-
-      // Điều hướng dựa trên vai trò
-      if (userRole == 'admin') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AdminHomePage()),
-        );
-      } else if (userRole == 'tech') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TechHomePage()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const UserHomePage()),
-        );
-      }
-      } on FirebaseAuthException catch(e){
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password'){
-          print('Wrong password');
+        } else if (userRole == 'tech') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const TechHomePage()),
+          );
         } else {
-          print('Error: $e');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserHomePage(userData: userData),
+            ),
+          );
         }
-      }
+      } on FirebaseAuthException catch (e) {
+          String errorMessage;
+          if (e.code == 'user-not-found') {
+            errorMessage = 'Không tìm thấy người dùng với email này.';
+          } else if (e.code == 'wrong-password') {
+            errorMessage = 'Mật khẩu không chính xác.';
+          } else {
+            errorMessage = 'Lỗi: ${e.message}';
+          }
+
+          showErrorDialog(errorMessage);
+        }
     }
   }
-  // có thể chuyển hóa các xác thực trên show ra alert
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,9 +124,9 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+          padding: const EdgeInsets.all(16.0),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: screenWidth * 0.9),
+            constraints: BoxConstraints(maxWidth: 400),
             child: Form(
               key: _formKey,
               child: Column(
@@ -134,6 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -154,6 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: const InputDecoration(
                       labelText: 'Mật khẩu',
                       border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -204,12 +237,13 @@ class _LoginPageState extends State<LoginPage> {
                   // Links for "Forgot Password?" and "Sign Up"
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       TextButton(
                         onPressed: () {
                           // Add your forgot password logic here
                         },
-                        child: const Text('Quên mật khẩu?'),
+                        child: const Text('Quên mật khẩu?', style: TextStyle(fontSize: 12)),
                       ),
                       const Text('|'),
                       TextButton(
@@ -220,9 +254,9 @@ class _LoginPageState extends State<LoginPage> {
                                 builder: (context) => const RegisterPage()),
                           );
                         },
-                        child: const Text('Bạn chưa có tài khoản? Đăng ký'),
+                        child: const Text('Bạn chưa có tài khoản? Đăng ký', style: TextStyle(fontSize: 12)),
                       ),
-                    ],
+                    ], 
                   ),
                   SizedBox(height: screenHeight * 0.02),
 

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pbl3/source/userHome.dart';
+import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -66,46 +66,56 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        UserCredential userCredential =
-            await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        // Kiểm tra tai ảnh đại diện và lấy url lưu vào store
-        String avatarUrl = '';
-        if (_avatar != null) {
-          try {
-            avatarUrl = await _uploadImage(_avatar!) ?? '';
-          } catch (e) {
-            print('Lỗi khi tải ảnh lên Cloudinary: $e');
-          }
-          ;
-        }
-        await _firestore.collection('users').doc(userCredential.user!.uid).set({
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'address': _addressController.text,
-          'avatar': avatarUrl,
-          'role': "user",
-          'createdAt': Timestamp.now(),
-        });
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const UserHomePage()),
-        );
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          _showErrorDialog('The password too weak');
-        } else if (e.code == 'email-already-in-use') {
-          _showErrorDialog('Email already in use');
-        }
-      } catch (e) {
-        _showErrorDialog('Error creating account');
+  if (_formKey.currentState!.validate()) {
+    try {
+      // Tạo tài khoản người dùng
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      String avatarUrl = '';
+      if (_avatar != null) {
+        avatarUrl = await _uploadImage(_avatar!) ?? '';
       }
+
+      // Lưu thông tin người dùng vào Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'address': _addressController.text,
+        'avatar': avatarUrl,
+        'role': "user",
+        'createdAt': Timestamp.now(),
+      });
+
+      // Lấy dữ liệu từ Firestore
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      // Chuyển đến trang PersonalAccountPage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserHomePage(userData: userData),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        _showErrorDialog('The password is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        _showErrorDialog('This email is already in use.');
+      }
+    } catch (e) {
+      _showErrorDialog('Error creating account: $e');
     }
   }
+}
+
 
   void _showErrorDialog(String message) {
     showDialog(
