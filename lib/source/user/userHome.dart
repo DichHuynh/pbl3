@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pbl3/source/user/issue.dart';
 import 'package:pbl3/source/user/personal.dart'; // Đảm bảo tệp `personal.dart` tồn tại
+import 'package:pbl3/source/user/report.dart';
+import 'package:flutter/cupertino.dart';
 
 class UserHomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -32,16 +34,18 @@ class _HomePage extends State<UserHomePage> {
                     'Công dân số',
                     style: TextStyle(color: Colors.blue, fontSize: 24),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                   GridView.count(
                     crossAxisCount: 2, // Hiển thị 2 cột trong lưới
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: List.generate(4, (index) {
+                    children: List.generate(
+                      4, 
+                      (index) {
                       return const IconContainer(
                         imageUrl:
                             'assets/anhmau.jpg', // Thay bằng đường dẫn ảnh thực tế
-                        label: 'label',
+                        label: 'Theo dõi lượng mưa',
                       );
                     }),
                   ),
@@ -78,6 +82,12 @@ class _HomePage extends State<UserHomePage> {
               MaterialPageRoute(builder: (context) => IssuePage()),
               );
           }
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReportIssuePage()),
+            );
+          }
           if (index == 3) {
             Navigator.push(
               context,
@@ -93,6 +103,7 @@ class _HomePage extends State<UserHomePage> {
   }
 }
 
+//Navigation Bar
 class IconContainer extends StatelessWidget {
   final String imageUrl;
   final String label;
@@ -112,6 +123,7 @@ class IconContainer extends StatelessWidget {
             return Icon(Icons.image_not_supported,
                 size: 100, color: Colors.grey);
           },
+
         ),
         const SizedBox(height: 5),
         Text(
@@ -120,6 +132,156 @@ class IconContainer extends StatelessWidget {
           style: const TextStyle(fontSize: 14),
         ),
       ],
+    );
+  }
+}
+
+//Pages that Icons lead to
+// Weather Page
+class WeatherPage extends StatelessWidget {
+  const WeatherPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.activeBlue,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.activeBlue,
+        middle: const Text(
+          'Dự báo thời tiết',
+          style: TextStyle(color: CupertinoColors.black),
+        ),
+
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
+          onPressed: () {} //
+        ),
+      ),
+      child: const Center(
+        child: Text(
+          'Tạm thời để đây đã code cái này sau',
+          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
+        )
+      ),
+    );
+  }
+}
+
+//Dong gop y kien
+class OpinionPage extends StatelessWidget {
+  const OpinionPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.activeBlue,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.activeBlue,
+        middle: const Text(
+          'Đóng góp ý kiến',
+          style: TextStyle(color: CupertinoColors.black),
+        ),
+
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
+          onPressed: () {} //
+        ),
+      ),
+      child: const Center(
+        child: Text(
+          'Tạm thời để đây đã code cái này sau',
+          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
+        )
+      ),
+    );
+  }
+}
+
+//Service Page
+//Dong gop y kien
+class ServicePage extends StatelessWidget {
+  const ServicePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.activeBlue,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.activeBlue,
+        middle: const Text(
+          'Dịch vụ công',
+          style: TextStyle(color: CupertinoColors.black),
+        ),
+
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
+          onPressed: () {} //
+        ),
+      ),
+      child: const Center(
+        child: Text(
+          'Tạm thời để đây đã code cái này sau',
+          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
+        )
+      ),
+    );
+  }
+}
+
+////Chua biet nx - page :)
+class OtherPage extends StatelessWidget {
+  const OtherPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.activeBlue,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.activeBlue,
+        middle: const Text(
+          'Khác ...',
+          style: TextStyle(color: CupertinoColors.black),
+        ),
+
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
+          onPressed: () {} //
+        ),
+      ),
+      child: const Center(
+        child: Text(
+          'Tạm thời để đây đã code cái này sau',
+          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
+        )
+      ),
     );
   }
 }
