@@ -29,25 +29,106 @@ class _HomePage extends State<UserHomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                
+                children: [ //Tất cả những thứ nằm trong màn hình
                   const Text(
                     'Công dân số',
                     style: TextStyle(color: Colors.blue, fontSize: 24),
                   ),
                   const SizedBox(height: 20),
+
                   GridView.count(
                     crossAxisCount: 2, // Hiển thị 2 cột trong lưới
+                    crossAxisSpacing: 20.0, //Khoảng cách giữa các cột
+                    mainAxisSpacing: 20.0, //Khoảng cách giữa các hành
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: List.generate(
-                      4, 
-                      (index) {
-                      return const IconContainer(
-                        imageUrl:
-                            'assets/anhmau.jpg', // Thay bằng đường dẫn ảnh thực tế
-                        label: 'Theo dõi lượng mưa',
-                      );
-                    }),
+                    
+                    children: [
+                      
+                      //Icon dự báo thời tiết
+                      GestureDetector(
+                        onTap: (){
+                          print("Container clicked");
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => WeatherPage()),
+                          );
+                        },
+                        child: new Container(
+                          height: 25, 
+                          width: 25, 
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/anhmau.jpg'),
+                              fit: BoxFit.cover, //để fit hình ảnh với Container của hình
+                            )
+                          )
+                        )
+                      ),
+
+                      //Icon đóng góp ý kiến
+                      GestureDetector(
+                        onTap: (){
+                          print("Container clicked");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => OpinionPage()),
+                          );
+                        },
+                        child: new Container(
+                          height: 25, 
+                          width: 25, 
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/anhmau.jpg'),
+                              fit: BoxFit.cover, //để fit hình ảnh với Container của hình
+                            )
+                          )
+                        )
+                      ),
+
+                    //Icon Dịch vụ công
+                    GestureDetector(
+                      onTap: (){
+                        print("Container clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ServicePage()),
+                        );
+                      },
+                      child: new Container(
+                        height: 25, 
+                        width: 25, 
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/anhmau.jpg'),
+                            fit: BoxFit.cover, //để fit hình ảnh với Container của hình                            )
+                          )
+                        )
+                      )
+                    ),
+
+                    //Icon khác
+                    GestureDetector(
+                      onTap: (){
+                        print("Container clicked");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => OtherPage()),
+                        );
+                      },
+                      child: new Container(
+                        height: 25, 
+                        width: 25, 
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/anhmau.jpg'),
+                            fit: BoxFit.cover, //để fit hình ảnh với Container của hình                            )
+                          )
+                        )
+                      ),
+                    )],
                   ),
                 ],
               ),
