@@ -8,7 +8,7 @@ class PersonalAccountPage extends StatelessWidget {
 
   const PersonalAccountPage({super.key, required this.userData});
 
-  void _showEditModal(BuildContext context, String userId) {
+  void _showEditModal(BuildContext context) {
 
     final TextEditingController nameController =
         TextEditingController(text: userData['name'] ?? "Nguyễn Văn A");
@@ -85,33 +85,33 @@ class PersonalAccountPage extends StatelessWidget {
                   ),
                   CupertinoButton.filled(
                     child: const Text("Lưu"),
-                    onPressed: () async {
-                    try {
-                      // Lưu thông tin người dùng lên Firestore
-                      await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(userId)
-                          .update({
-                        'name': nameController.text.trim(),
-                        'email': emailController.text.trim(),
-                        'address': addressController.text.trim(),
-                        'updatedAt': Timestamp.now(),
-                      });
+                    onPressed: () {},
+                  //   try {
+                  //     // Lưu thông tin người dùng lên Firestore
+                  //     await FirebaseFirestore.instance
+                  //         .collection('users')
+                  //         .doc(userId)
+                  //         .update({
+                  //       'name': nameController.text.trim(),
+                  //       'email': emailController.text.trim(),
+                  //       'address': addressController.text.trim(),
+                  //       'updatedAt': Timestamp.now(),
+                  //     });
 
-                      // Hiển thị thông báo thành công
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Cập nhật thông tin thành công!")),
-                      );
+                  //     // Hiển thị thông báo thành công
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       const SnackBar(content: Text("Cập nhật thông tin thành công!")),
+                  //     );
 
-                      // Đóng modal
-                      Navigator.pop(context);
-                    } catch (e) {
-                      // Hiển thị thông báo lỗi
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Lỗi: ${e.toString()}")),
-                      );
-                    }
-                  },
+                  //     // Đóng modal
+                  //     Navigator.pop(context);
+                  //   } catch (e) {
+                  //     // Hiển thị thông báo lỗi
+                  //     ScaffoldMessenger.of(context).showSnackBar(
+                  //       SnackBar(content: Text("Lỗi: ${e.toString()}")),
+                  //     );
+                  //   }
+                  // },
                   ),
                 ],
               ),
@@ -191,7 +191,7 @@ class PersonalAccountPage extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
-                    onTap: () => _showEditModal(context, userData['id']),
+                    onTap: () => _showEditModal(context),
                   ),
                   const Divider(height: 20, thickness: 1),
                   ListTile(

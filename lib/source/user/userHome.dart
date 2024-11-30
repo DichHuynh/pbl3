@@ -14,7 +14,6 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<UserHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,107 +27,40 @@ class _HomePage extends State<UserHomePage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                
-                children: [ //Tất cả những thứ nằm trong màn hình
-                  const Text(
-                    'Công dân số',
-                    style: TextStyle(color: Colors.blue, fontSize: 24),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildCard(
+                    context,
+                    icon: Icons.report_problem,
+                    title: 'Báo cáo Sự cố',
+                    description:
+                        'Gửi thông tin về sự cố giao thông bạn gặp phải.',
+                    routeName: '/reportIssue',
                   ),
-                  const SizedBox(height: 20),
-
-                  GridView.count(
-                    crossAxisCount: 2, // Hiển thị 2 cột trong lưới
-                    crossAxisSpacing: 50.0, //Khoảng cách giữa các cột
-                    mainAxisSpacing: 50.0, //Khoảng cách giữa các hành
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    
-                    children: [
-                      
-                      //Icon dự báo thời tiết
-                      GestureDetector(
-                        onTap: (){
-                          print("Container clicked");
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => WeatherPage()),
-                          );
-                        },
-                        child: new Container(
-                          height: 10, 
-                          width: 10, 
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/anhmau.jpg'),
-                              fit: BoxFit.cover, //để fit hình ảnh với Container của hình
-                            ),
-                          ),                          
-                        ),
-                      ),
-
-                      //Icon đóng góp ý kiến
-                      GestureDetector(
-                        onTap: (){
-                          print("Container clicked");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => OpinionPage()),
-                          );
-                        },
-                        child: new Container(
-                          height: 10, 
-                          width: 10, 
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/anhmau.jpg'),
-                              fit: BoxFit.cover, //để fit hình ảnh với Container của hình
-                            )
-                          )
-                        )
-                      ),
-
-                    //Icon Dịch vụ công
-                    GestureDetector(
-                      onTap: (){
-                        print("Container clicked");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ServicePage()),
-                        );
-                      },
-                      child: new Container(
-                        height: 10, 
-                        width: 10, 
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/anhmau.jpg'),
-                            fit: BoxFit.cover, //để fit hình ảnh với Container của hình                            )
-                          )
-                        )
-                      )
-                    ),
-
-                    //Icon khác
-                    GestureDetector(
-                      onTap: (){
-                        print("Container clicked");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => OtherPage()),
-                        );
-                      },
-                      child: new Container(
-                        height: 10, 
-                        width: 10, 
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/anhmau.jpg'),
-                            fit: BoxFit.cover, //để fit hình ảnh với Container của hình                            )
-                          )
-                        )
-                      ),
-                    )],
+                  SizedBox(height: 16),
+                  _buildCard(
+                    context,
+                    icon: Icons.assignment_turned_in,
+                    title: 'Theo dõi Tiến trình Xử lý',
+                    description: 'Theo dõi tiến độ xử lý sự cố bạn đã báo.',
+                    routeName: '/trackProgress',
+                  ),
+                  SizedBox(height: 16),
+                  _buildCard(
+                    context,
+                    icon: Icons.feedback,
+                    title: 'Gửi Phản hồi',
+                    description: 'Đánh giá chất lượng xử lý sự cố.',
+                    routeName: '/feedback',
+                  ),
+                  SizedBox(height: 16),
+                  _buildCard(
+                    context,
+                    icon: Icons.info,
+                    title: 'Thông tin Cơ sở hạ tầng Giao thông',
+                    description:
+                        'Xem thông tin về các cơ sở hạ tầng giao thông.',
+                    routeName: '/trafficInfo',
                   ),
                 ],
               ),
@@ -161,7 +93,7 @@ class _HomePage extends State<UserHomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => IssuePage()),
-              );
+            );
           }
           if (index == 2) {
             Navigator.push(
@@ -172,13 +104,35 @@ class _HomePage extends State<UserHomePage> {
           if (index == 3) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => PersonalAccountPage(userData: widget.userData)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PersonalAccountPage(userData: widget.userData)),
             );
           }
         },
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
+      ),
+    );
+  }
+  Widget _buildCard(BuildContext context,
+      {required IconData icon,
+      required String title,
+      required String description,
+      required String routeName}) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: Icon(icon, color: Colors.white),
+        ),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(description),
+        trailing: Icon(Icons.arrow_forward_ios),
+        onTap: () => Navigator.pushNamed(context, routeName),
       ),
     );
   }
@@ -204,7 +158,6 @@ class IconContainer extends StatelessWidget {
             return Icon(Icons.image_not_supported,
                 size: 100, color: Colors.grey);
           },
-
         ),
         const SizedBox(height: 5),
         Text(
@@ -216,4 +169,3 @@ class IconContainer extends StatelessWidget {
     );
   }
 }
-
