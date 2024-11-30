@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pbl3/source/user/PageofDuong.dart';
 import 'package:pbl3/source/user/issue.dart';
 import 'package:pbl3/source/user/personal.dart'; // Đảm bảo tệp `personal.dart` tồn tại
 import 'package:pbl3/source/user/report.dart';
@@ -35,7 +36,7 @@ class _HomePage extends State<UserHomePage> {
                     title: 'Báo cáo Sự cố',
                     description:
                         'Gửi thông tin về sự cố giao thông bạn gặp phải.',
-                    routeName: '/reportIssue',
+                    pageBuilder: (context) => ReportIssuePage(),
                   ),
                   SizedBox(height: 16),
                   _buildCard(
@@ -43,7 +44,7 @@ class _HomePage extends State<UserHomePage> {
                     icon: Icons.assignment_turned_in,
                     title: 'Theo dõi Tiến trình Xử lý',
                     description: 'Theo dõi tiến độ xử lý sự cố bạn đã báo.',
-                    routeName: '/trackProgress',
+                    pageBuilder: (context) => TrackProgressScreen(),
                   ),
                   SizedBox(height: 16),
                   _buildCard(
@@ -51,7 +52,7 @@ class _HomePage extends State<UserHomePage> {
                     icon: Icons.feedback,
                     title: 'Gửi Phản hồi',
                     description: 'Đánh giá chất lượng xử lý sự cố.',
-                    routeName: '/feedback',
+                    pageBuilder: (context) => FeedbackScreen(),
                   ),
                   SizedBox(height: 16),
                   _buildCard(
@@ -60,7 +61,7 @@ class _HomePage extends State<UserHomePage> {
                     title: 'Thông tin Cơ sở hạ tầng Giao thông',
                     description:
                         'Xem thông tin về các cơ sở hạ tầng giao thông.',
-                    routeName: '/trafficInfo',
+                    pageBuilder: (context) => TrafficInfoScreen(),
                   ),
                 ],
               ),
@@ -120,7 +121,7 @@ class _HomePage extends State<UserHomePage> {
       {required IconData icon,
       required String title,
       required String description,
-      required String routeName}) {
+      required WidgetBuilder pageBuilder}) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -132,7 +133,13 @@ class _HomePage extends State<UserHomePage> {
         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(description),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () => Navigator.pushNamed(context, routeName),
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: pageBuilder),
+            );
+        }
+        
       ),
     );
   }
