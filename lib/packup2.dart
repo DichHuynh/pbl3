@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 253),
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -157,6 +157,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 20),
                 CupertinoTextField(
                   controller: _nameController,
                   placeholder: 'Nhập họ và tên',
@@ -172,8 +173,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 CupertinoTextField(
                   controller: _emailController,
                   placeholder: 'Nhập email',
-                  prefix: Icon(CupertinoIcons.mail_solid,
-                      color: CupertinoColors.systemGrey),
+                  prefix: Icon(CupertinoIcons.mail_solid, color: CupertinoColors.systemGrey),
+                  suffix: Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeGreen),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: CupertinoColors.systemGrey6,
@@ -219,16 +220,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                const SizedBox(height: 15),
                 _buildFilePickerButton('Chọn avatar'),
                 const SizedBox(height: 15),
-                // CupertinoTextField(
-                //   placeholder: "Số điện thoại",
-                //   prefix: Icon(CupertinoIcons.phone,
-                //       color: CupertinoColors.systemGrey),
-                //   suffix: Text("+84",
-                //       style: TextStyle(color: CupertinoColors.activeBlue)),
-                // ),
+                CupertinoTextField(
+                  placeholder: "Số điện thoại",
+                  prefix: Icon(CupertinoIcons.phone, color: CupertinoColors.systemGrey),
+                  suffix: Text("+84", style: TextStyle(color: CupertinoColors.activeBlue)),
+                ),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

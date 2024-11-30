@@ -52,58 +52,17 @@ class _IssueState extends State<IssuePage> {
               children: [
                 Expanded(
                   // Sử dụng Expanded để các nút chạy hết chiều ngang của màn hình
-                  child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    color: Color(0xFFF3EFFF),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(
-                          CupertinoIcons
-                              .checkmark_seal_fill, // Biểu tượng check
-                          size: 18,
-                          color: Color(0xFF7C4DFF), // Màu tím đậm
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Xác minh thông tin',
-                          style: TextStyle(
-                            color: Color(0xFF7C4DFF), // Màu tím đậm
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.verified, size: 12),
+                    label: const Text("Xác minh thông tin"),
                     onPressed: () {},
                   ),
                 ),
                 SizedBox(width: 10), // Khoảng cách giữa các nút
                 Expanded(
-                  // Sử dụng Expanded để các nút chạy hết chiều ngang của màn hình
-                  child: CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    color: Color(0xFFF3EFFF),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(
-                          CupertinoIcons
-                              .bolt_horizontal_circle_fill, // Verified
-                          size: 18,
-                          color: Color(0xFF7C4DFF), // Màu tím đậm
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Ứng cứu khẩn cấp',
-                          style: TextStyle(
-                            color: Color(0xFF7C4DFF), // Màu tím đậm
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.sos, size: 12),
+                    label: const Text("Ứng cứu khẩn cấp"),
                     onPressed: () {},
                   ),
                 ),
@@ -117,15 +76,12 @@ class _IssueState extends State<IssuePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CupertinoButton(
-                  color: const Color.fromARGB(255, 245, 240, 197),
-                  borderRadius: BorderRadius.circular(8.0), 
-                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-                  onPressed: () {},
-                  child: const Text(
-                    "Tìm kiếm",
-                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 245, 240, 197),
                   ),
+                  onPressed: () {},
+                  child: const Text("Tìm kiếm"),
                 ),
               ],
             ),
@@ -136,15 +92,15 @@ class _IssueState extends State<IssuePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                CupertinoButton(
+                TextButton(
                   onPressed: () {},
                   child: const Text("Tiêu biểu"),
                 ),
-                CupertinoButton(
+                TextButton(
                   onPressed: () {},
                   child: const Text("Đã xử lý"),
                 ),
-                CupertinoButton(
+                TextButton(
                   onPressed: () {},
                   child: const Text("Đang xử lý"),
                 ),
@@ -243,10 +199,8 @@ class _IssueState extends State<IssuePage> {
         child: SizedBox(
           width: 100, // Đặt chiều rộng tùy chỉnh cho nút
           height: 40, // Đặt chiều cao tùy chỉnh cho nút
-          child: CupertinoButton(
-            color: Colors.yellow, // Màu nền của nút
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            borderRadius: BorderRadius.circular(20.0), // Bo góc tương tự FAB
+          child: FloatingActionButton(
+            backgroundColor: Colors.yellow, // Màu nền của nút nổi
             onPressed: () {
               Navigator.push(
                 context,
@@ -255,19 +209,14 @@ class _IssueState extends State<IssuePage> {
               );
             },
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Căn giữa nội dung
+              mainAxisSize: MainAxisSize.max, // Chiều rộng cố định
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Căn giữa các phần tử trong hàng
               children: const [
-                Icon(
-                  CupertinoIcons.add, 
-                  size: 18,
-                  color: Colors.black, 
-                ),
-                SizedBox(width: 2), // Khoảng cách giữa biểu tượng và văn bản
-                Text(
-                  "Báo cáo",
-                  style: TextStyle(fontSize: 14, color: Colors.black,
-                                    fontWeight: FontWeight.bold,),
-                ),
+                Icon(Icons.add), // Biểu tượng cho nút
+                SizedBox(width: 8), // Khoảng cách giữa biểu tượng và văn bản
+                Text("Báo cáo",
+                    style: TextStyle(fontSize: 16)), // Văn bản cho nút
               ],
             ),
           ),

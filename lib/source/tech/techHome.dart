@@ -13,7 +13,7 @@ class _TechHomePageState extends State<TechHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trang chủ Tech'),
-        backgroundColor: Colors.blue, // Màu nền cho AppBar (có thể thay đổi)
+        backgroundColor: Colors.green, // Màu nền cho AppBar (có thể thay đổi)
       ),
       body: Center(
         child: const Text(
