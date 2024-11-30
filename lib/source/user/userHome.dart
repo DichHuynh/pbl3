@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pbl3/source/user/issue.dart';
 import 'package:pbl3/source/user/personal.dart'; // Đảm bảo tệp `personal.dart` tồn tại
 import 'package:pbl3/source/user/report.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:pbl3/source/user/iconpage.dart';
 
 class UserHomePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -39,8 +39,8 @@ class _HomePage extends State<UserHomePage> {
 
                   GridView.count(
                     crossAxisCount: 2, // Hiển thị 2 cột trong lưới
-                    crossAxisSpacing: 20.0, //Khoảng cách giữa các cột
-                    mainAxisSpacing: 20.0, //Khoảng cách giữa các hành
+                    crossAxisSpacing: 50.0, //Khoảng cách giữa các cột
+                    mainAxisSpacing: 50.0, //Khoảng cách giữa các hành
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     
@@ -56,15 +56,15 @@ class _HomePage extends State<UserHomePage> {
                           );
                         },
                         child: new Container(
-                          height: 25, 
-                          width: 25, 
+                          height: 10, 
+                          width: 10, 
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage('assets/anhmau.jpg'),
                               fit: BoxFit.cover, //để fit hình ảnh với Container của hình
-                            )
-                          )
-                        )
+                            ),
+                          ),                          
+                        ),
                       ),
 
                       //Icon đóng góp ý kiến
@@ -77,8 +77,8 @@ class _HomePage extends State<UserHomePage> {
                           );
                         },
                         child: new Container(
-                          height: 25, 
-                          width: 25, 
+                          height: 10, 
+                          width: 10, 
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage('assets/anhmau.jpg'),
@@ -98,8 +98,8 @@ class _HomePage extends State<UserHomePage> {
                         );
                       },
                       child: new Container(
-                        height: 25, 
-                        width: 25, 
+                        height: 10, 
+                        width: 10, 
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage('assets/anhmau.jpg'),
@@ -119,8 +119,8 @@ class _HomePage extends State<UserHomePage> {
                         );
                       },
                       child: new Container(
-                        height: 25, 
-                        width: 25, 
+                        height: 10, 
+                        width: 10, 
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage('assets/anhmau.jpg'),
@@ -217,152 +217,3 @@ class IconContainer extends StatelessWidget {
   }
 }
 
-//Pages that Icons lead to
-// Weather Page
-class WeatherPage extends StatelessWidget {
-  const WeatherPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.activeBlue,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.activeBlue,
-        middle: const Text(
-          'Dự báo thời tiết',
-          style: TextStyle(color: CupertinoColors.black),
-        ),
-
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
-          onPressed: () {} //
-        ),
-      ),
-      child: const Center(
-        child: Text(
-          'Tạm thời để đây đã code cái này sau',
-          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
-        )
-      ),
-    );
-  }
-}
-
-//Dong gop y kien
-class OpinionPage extends StatelessWidget {
-  const OpinionPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.activeBlue,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.activeBlue,
-        middle: const Text(
-          'Đóng góp ý kiến',
-          style: TextStyle(color: CupertinoColors.black),
-        ),
-
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
-          onPressed: () {} //
-        ),
-      ),
-      child: const Center(
-        child: Text(
-          'Tạm thời để đây đã code cái này sau',
-          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
-        )
-      ),
-    );
-  }
-}
-
-//Service Page
-//Dong gop y kien
-class ServicePage extends StatelessWidget {
-  const ServicePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.activeBlue,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.activeBlue,
-        middle: const Text(
-          'Dịch vụ công',
-          style: TextStyle(color: CupertinoColors.black),
-        ),
-
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
-          onPressed: () {} //
-        ),
-      ),
-      child: const Center(
-        child: Text(
-          'Tạm thời để đây đã code cái này sau',
-          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
-        )
-      ),
-    );
-  }
-}
-
-////Chua biet nx - page :)
-class OtherPage extends StatelessWidget {
-  const OtherPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.activeBlue,
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.activeBlue,
-        middle: const Text(
-          'Khác ...',
-          style: TextStyle(color: CupertinoColors.black),
-        ),
-
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.back, color: CupertinoColors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.add, color: CupertinoColors.black),
-          onPressed: () {} //
-        ),
-      ),
-      child: const Center(
-        child: Text(
-          'Tạm thời để đây đã code cái này sau',
-          style: TextStyle(fontSize: 30, color: CupertinoColors.black)
-        )
-      ),
-    );
-  }
-}
