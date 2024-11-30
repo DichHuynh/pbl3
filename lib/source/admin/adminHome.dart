@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pbl3/source/admin/manyPageAdmin.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -12,17 +13,97 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trang chủ Admin'),
-        backgroundColor: Colors.red, // Màu nền cho AppBar (có thể thay đổi)
+        title: Text('Trang Quản trị'),
+        centerTitle: true,
+        backgroundColor: Colors.red,
       ),
-      body: Center(
-        child: const Text(
-          'Trang chủ',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            _buildCard(
+              context,
+              icon: Icons.report_problem,
+              title: 'Quản lý Sự cố',
+              description: 'Xem và quản lý các sự cố được báo cáo.',
+              pageBuilder: (context) => ManageIssuesScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.build,
+              title: 'Quản lý Vật tư Thiết bị',
+              description: 'Quản lý thiết bị, vật tư và tình trạng bảo trì.',
+              pageBuilder: (context) => ManageEquipmentScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.schedule,
+              title: 'Lập kế hoạch Bảo trì',
+              description: 'Quản lý lịch trình bảo trì định kỳ.',
+              pageBuilder: (context) => MaintenanceScheduleScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.report,
+              title: 'Xem Báo cáo',
+              description: 'Xem báo cáo về sự cố và bảo trì.',
+              pageBuilder: (context) => ReportsScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.person_add,
+              title: 'Quản lý Người dùng',
+              description: 'Quản lý người dùng và phân quyền.',
+              pageBuilder: (context) => ManageUsersScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.notifications,
+              title: 'Thông báo và Cảnh báo',
+              description: 'Quản lý thông báo cho người dùng.',
+              pageBuilder: (context) => NotificationsScreen(),
+            ),
+            SizedBox(height: 16),
+            _buildCard(
+              context,
+              icon: Icons.settings,
+              title: 'Cài đặt Hệ thống',
+              description: 'Quản lý cài đặt của hệ thống.',
+              pageBuilder: (context) => SystemSettingsScreen(),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context,
+      {required IconData icon,
+      required String title,
+      required String description,
+      required WidgetBuilder pageBuilder}) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: Icon(icon, color: Colors.white),
+        ),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(description),
+        trailing: Icon(Icons.arrow_forward_ios),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: pageBuilder),
+          );
+        },
       ),
     );
   }
