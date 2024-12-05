@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/manageIssues': (context) => const ManageIssuesScreen(),
+        // '/manageIssues': (context) => const ManageIssuesScreen(),
         '/manageEquipment': (context) => const ManageEquipmentScreen(),
         '/maintenanceSchedule': (context) => const MaintenanceScheduleScreen(),
         '/reports': (context) => const ReportsScreen(),
@@ -81,32 +81,32 @@ class MyApp extends StatelessWidget {
 }
 
 // ------------------ Màn hình Quản lý Sự cố ------------------
-class ManageIssuesScreen extends StatelessWidget {
-  const ManageIssuesScreen({super.key});
+// class ManageIssuesScreen extends StatelessWidget {
+//   const ManageIssuesScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Quản lý Sự cố')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 5, // Giả sử có 5 sự cố để quản lý
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text('Sự cố $index'),
-              subtitle: const Text('Tình trạng xử lý: Đang xử lý'),
-              trailing: const Icon(Icons.check_circle, color: Colors.green),
-              onTap: () {
-                // Xử lý phân công sự cố
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Quản lý Sự cố')),
+//       body: ListView.builder(
+//         padding: const EdgeInsets.all(16.0),
+//         itemCount: 5, // Giả sử có 5 sự cố để quản lý
+//         itemBuilder: (context, index) {
+//           return Card(
+//             child: ListTile(
+//               title: Text('Sự cố $index'),
+//               subtitle: const Text('Tình trạng xử lý: Đang xử lý'),
+//               trailing: const Icon(Icons.check_circle, color: Colors.green),
+//               onTap: () {
+//                 // Xử lý phân công sự cố
+//               },
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 // ------------------ Màn hình Quản lý Vật tư Thiết bị ------------------
 class ManageEquipmentScreen extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pbl3/source/admin/ManageIssuesScreen.dart';
 import 'package:pbl3/source/admin/manyPageAdmin.dart';
 
 class AdminHomePage extends StatefulWidget {
