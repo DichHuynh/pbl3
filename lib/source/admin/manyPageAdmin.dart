@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         // '/manageIssues': (context) => const ManageIssuesScreen(),
-        '/manageEquipment': (context) => const ManageEquipmentScreen(),
+        // '/manageEquipment': (context) => const ManageEquipmentScreen(),
         '/maintenanceSchedule': (context) => const MaintenanceScheduleScreen(),
         '/reports': (context) => const ReportsScreen(),
         '/manageUsers': (context) => const ManageUsersScreen(),
@@ -109,29 +109,29 @@ class MyApp extends StatelessWidget {
 // }
 
 // ------------------ Màn hình Quản lý Vật tư Thiết bị ------------------
-class ManageEquipmentScreen extends StatelessWidget {
-  const ManageEquipmentScreen({super.key});
+// class ManageEquipmentScreen extends StatelessWidget {
+//   const ManageEquipmentScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Quản lý Vật tư Thiết bị')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 3, // Giả sử có 3 thiết bị
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text('Thiết bị $index'),
-              subtitle: const Text('Tình trạng: Đang bảo trì'),
-              trailing: const Icon(Icons.build, color: Colors.orange),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Quản lý Vật tư Thiết bị')),
+//       body: ListView.builder(
+//         padding: const EdgeInsets.all(16.0),
+//         itemCount: 3, // Giả sử có 3 thiết bị
+//         itemBuilder: (context, index) {
+//           return Card(
+//             child: ListTile(
+//               title: Text('Thiết bị $index'),
+//               subtitle: const Text('Tình trạng: Đang bảo trì'),
+//               trailing: const Icon(Icons.build, color: Colors.orange),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 // ------------------ Màn hình Lập kế hoạch Bảo trì ------------------
 class MaintenanceScheduleScreen extends StatelessWidget {
