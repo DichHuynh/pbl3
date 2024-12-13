@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         // '/manageEquipment': (context) => const ManageEquipmentScreen(),
         '/maintenanceSchedule': (context) => const MaintenanceScheduleScreen(),
         '/reports': (context) => const ReportsScreen(),
-        '/manageUsers': (context) => const ManageUsersScreen(),
+        // '/manageUsers': (context) => const ManageUsersScreen(),
         '/notifications': (context) => const NotificationsScreen(),
         '/systemSettings': (context) => const SystemSettingsScreen(),
       },
@@ -203,32 +203,32 @@ class ReportsScreen extends StatelessWidget {
 }
 
 // ------------------ Màn hình Quản lý Người dùng ------------------
-class ManageUsersScreen extends StatelessWidget {
-  const ManageUsersScreen({super.key});
+// class ManageUsersScreen extends StatelessWidget {
+//   const ManageUsersScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Quản lý Người dùng')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 3, // Giả sử có 3 người dùng
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text('Người dùng $index'),
-              subtitle: const Text('Phân quyền: Quản trị viên'),
-              trailing: const Icon(Icons.edit, color: Colors.blue),
-              onTap: () {
-                // Xử lý chỉnh sửa thông tin người dùng
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Quản lý Người dùng')),
+//       body: ListView.builder(
+//         padding: const EdgeInsets.all(16.0),
+//         itemCount: 3, // Giả sử có 3 người dùng
+//         itemBuilder: (context, index) {
+//           return Card(
+//             child: ListTile(
+//               title: Text('Người dùng $index'),
+//               subtitle: const Text('Phân quyền: Quản trị viên'),
+//               trailing: const Icon(Icons.edit, color: Colors.blue),
+//               onTap: () {
+//                 // Xử lý chỉnh sửa thông tin người dùng
+//               },
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 // ------------------ Màn hình Thông báo và Cảnh báo ------------------
 class NotificationsScreen extends StatelessWidget {
