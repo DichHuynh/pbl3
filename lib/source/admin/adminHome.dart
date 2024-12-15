@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbl3/source/admin/ManageIssue.dart';
 import 'package:pbl3/source/admin/manageEquipment.dart';
+import 'package:pbl3/source/admin/manageTech.dart';
 import 'package:pbl3/source/admin/manageUser.dart';
 import 'package:pbl3/source/admin/manyPageAdmin.dart';
 
@@ -51,9 +52,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
             _buildCard(
               context,
               icon: Icons.report,
-              title: 'Xem Báo cáo',
-              description: 'Xem báo cáo về sự cố và bảo trì.',
-              pageBuilder: (context) => ReportsScreen(),
+              title: 'Quản lý nhân sự',
+              description: 'Quản lý các tài khoản kỹ thuật của hệ thống.',
+              pageBuilder: (context) => ManageTech(),
             ),
             SizedBox(height: 16),
             _buildCard(

@@ -7,137 +7,74 @@ import 'package:flutter/material.dart';
 class ManageUsersScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _detailUser(BuildContext context, Map<String, dynamic> user) {
-    final TextEditingController nameController =
-        TextEditingController(text: user['name']);
-    final TextEditingController emailController =
-        TextEditingController(text: user['email']);
-    final TextEditingController addressController =
-        TextEditingController(text: user['address']);
-// Định dạng ngày tạo từ Timestamp
-    String formattedDate = '';
-    if (user['createAt'] != null) {
-      formattedDate =
-          DateFormat('dd/MM/yyyy HH:mm:ss').format(user['createAt'].toDate());
-    }
-
-    final TextEditingController createdAtController =
-        TextEditingController(text: formattedDate);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            top: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Chỉnh sửa thông tin",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: nameController,
-                placeholder: "Họ và tên",
-                prefix: const Icon(CupertinoIcons.person),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(8),
+void _detailUser(BuildContext context, Map<String, dynamic> user) {
+  String formattedDate = user['createdAt'] != null
+      ? DateFormat('dd/MM/yyyy HH:mm:ss').format(user['createdAt'].toDate())
+      : 'Không có dữ liệu';
+      
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Thông tin chi tiết",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(CupertinoIcons.person),
+              title: const Text("Họ và tên"),
+              subtitle: Text(user['name'] ?? "Chưa có thông tin"),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(CupertinoIcons.mail),
+              title: const Text("Email"),
+              subtitle: Text(user['email'] ?? "Chưa có thông tin"),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(CupertinoIcons.location),
+              title: const Text("Địa chỉ"),
+              subtitle: Text(user['address'] ?? "Chưa có thông tin"),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(CupertinoIcons.calendar),
+              title: const Text("Ngày tạo"),
+              subtitle: Text(formattedDate),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CupertinoButton(
+                  child: const Text("Đóng"),
+                  onPressed: () => Navigator.pop(context),
                 ),
-              ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: emailController,
-                placeholder: "Email",
-                prefix: const Icon(CupertinoIcons.mail),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: addressController,
-                placeholder: "Nhập địa chỉ",
-                prefix: const Icon(CupertinoIcons.location,
-                    color: CupertinoColors.systemGrey),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: CupertinoColors.systemGrey6,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: createdAtController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Ngày tạo',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CupertinoButton(
-                    child: const Text("Hủy"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  CupertinoButton.filled(
-                    child: Text(user['status'] == 'Active' ? "Khóa" : "Mở"),
-                    onPressed: () async {
-                      try {
-                        // Cập nhật trạng thái tài khoản
-                        final newStatus =
-                            user['status'] == 'Active' ? 'Inactive' : 'Active';
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user['id'])
-                            .update({'status': newStatus});
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
-                        // Hiển thị thông báo thành công
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Đã cập nhật trạng thái tài khoản thành ${newStatus == 'Active' ? 'Hoạt động' : 'Không hoạt động'}.'),
-                          ),
-                        );
-
-                        // Đóng modal sau khi cập nhật
-                        Navigator.pop(context);
-                      } catch (e) {
-                        // Hiển thị thông báo lỗi
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Lỗi: ${e.toString()}')),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   void _deleteUser(String userId) {
     // Hàm xóa người dùng

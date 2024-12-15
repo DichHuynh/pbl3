@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         // '/manageIssues': (context) => const ManageIssuesScreen(),
         // '/manageEquipment': (context) => const ManageEquipmentScreen(),
         '/maintenanceSchedule': (context) => const MaintenanceScheduleScreen(),
-        '/reports': (context) => const ReportsScreen(),
+        // '/reports': (context) => const ReportsScreen(),
         // '/manageUsers': (context) => const ManageUsersScreen(),
         '/notifications': (context) => const NotificationsScreen(),
         '/systemSettings': (context) => const SystemSettingsScreen(),
@@ -175,32 +175,32 @@ class MaintenanceScheduleScreen extends StatelessWidget {
 }
 
 // ------------------ Màn hình Xem Báo cáo ------------------
-class ReportsScreen extends StatelessWidget {
-  const ReportsScreen({super.key});
+// class ReportsScreen extends StatelessWidget {
+//   const ReportsScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Xem Báo cáo')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: 3, // Giả sử có 3 báo cáo
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text('Báo cáo $index'),
-              subtitle: const Text('Chi tiết báo cáo về sự cố và bảo trì'),
-              trailing: const Icon(Icons.visibility),
-              onTap: () {
-                // Xử lý xem chi tiết báo cáo
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Xem Báo cáo')),
+//       body: ListView.builder(
+//         padding: const EdgeInsets.all(16.0),
+//         itemCount: 3, // Giả sử có 3 báo cáo
+//         itemBuilder: (context, index) {
+//           return Card(
+//             child: ListTile(
+//               title: Text('Báo cáo $index'),
+//               subtitle: const Text('Chi tiết báo cáo về sự cố và bảo trì'),
+//               trailing: const Icon(Icons.visibility),
+//               onTap: () {
+//                 // Xử lý xem chi tiết báo cáo
+//               },
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 // ------------------ Màn hình Quản lý Người dùng ------------------
 // class ManageUsersScreen extends StatelessWidget {
