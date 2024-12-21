@@ -1,12 +1,16 @@
+// package cho firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+// package cho flutter và các file khác
 import 'package:flutter/material.dart';
 import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/tech/techHome.dart';
 import 'package:pbl3/source/admin/adminHome.dart';
 import 'package:pbl3/source/signUp.dart';
 
+// widget chính : trang đăng nhậpnhập
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -26,6 +30,7 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
