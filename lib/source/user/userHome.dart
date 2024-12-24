@@ -13,6 +13,7 @@ class UserHomePage extends StatefulWidget {
   _HomePage createState() => _HomePage();
 }
 
+//cccccccccccc
 class _HomePage extends State<UserHomePage> {
   @override
   Widget build(BuildContext context) {
@@ -116,6 +117,7 @@ class _HomePage extends State<UserHomePage> {
       ),
     );
   }
+
   Widget _buildCard(BuildContext context,
       {required IconData icon,
       required String title,
@@ -125,21 +127,19 @@ class _HomePage extends State<UserHomePage> {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.blue,
-          child: Icon(icon, color: Colors.white),
-        ),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(description),
-        trailing: Icon(Icons.arrow_forward_ios),
-        onTap: (){
-          Navigator.push(
+          leading: CircleAvatar(
+            backgroundColor: Colors.blue,
+            child: Icon(icon, color: Colors.white),
+          ),
+          title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(description),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            Navigator.push(
               context,
               MaterialPageRoute(builder: pageBuilder),
             );
-        }
-        
-      ),
+          }),
     );
   }
 }
