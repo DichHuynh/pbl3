@@ -27,24 +27,52 @@ class _TechHomePageState extends State<TechHomePage> {
                   _buildCard(
                     context,
                     icon: Icons.report_problem,
-                    title: 'Danh sách Sự cố',
+                    title: 'Danh sách sự cố',
                     description:
-                        'Danh sách sự cố giao thông cần xử lý.',
+                        'Danh sách các sự cố giao thông và thiết bị hạ tầng cần xử lý.',
                     pageBuilder: (context) => IssueListPage(), // Trang danh sách sự cố
                   ),
                   SizedBox(height: 16),
                   _buildCard(
                     context,
                     icon: Icons.assignment_turned_in,
-                    title: 'Xử lý Sự cố',
-                    description: 'Xử lý sự cố giao thông.',
-                    pageBuilder: (context) => EquipmentListPage(), // Trang xử lý ...
-                  ),
+                    title: 'Báo cáo tiến độ',
+                    description: 'Báo cáo lại các tác vụ sau khi đã hoàn thành xử lý',
+                    pageBuilder: (context) =>  ReportIssue(),
+                  )
                 ],
               ))
           ],
         ),
       ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Giới thiệu',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            label: 'Tài khoản',
+          ),
+        ],
+        currentIndex: 0,
+        onTap: (index) {
+          if(index == 1){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => TechHomePage()));
+          }
+          else if(index == 2){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutApp()));
+          } else if (index == 3){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => TechInfo()));
+          }
+        }
+      )
     );
   }
 }
