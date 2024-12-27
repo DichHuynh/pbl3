@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pbl3/source/user/userHome.dart';
+// import 'package:pbl3/source/user/userHome.dart';
+import 'package:pbl3/source/user/views/user_main.dart';
+
 import 'package:pbl3/source/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -104,8 +106,8 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UserHomePage(userData: userData),
-          ),
+              // builder: (context) => UserHomePage(userData: userData),
+              builder: (context) => UserMainScreen()),
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {

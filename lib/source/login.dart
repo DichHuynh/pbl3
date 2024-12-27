@@ -5,7 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 
 // package cho flutter và các file khác
 import 'package:flutter/material.dart';
-import 'package:pbl3/source/user/userHome.dart';
+// import 'package:pbl3/source/user/userHome.dart';
+import 'package:pbl3/source/user/views/user_main.dart';
+
 import 'package:pbl3/source/tech/techHome.dart';
 import 'package:pbl3/source/admin/adminHome.dart';
 import 'package:pbl3/source/signUp.dart';
@@ -31,7 +33,6 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-
 class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -48,26 +49,25 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-
-void showErrorDialog(String errorMessage) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Lỗi'),
-        content: Text(errorMessage),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Đóng dialog
-            },
-            child: const Text('Đóng'),
-          ),
-        ],
-      );
-    },
-  );
-}
+  void showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Lỗi'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Đóng dialog
+              },
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
@@ -83,7 +83,8 @@ void showErrorDialog(String errorMessage) {
             .doc(userCredential.user!.uid)
             .get();
         String userRole = userDoc['role']; // Vai trò người dùng
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>; // Thông tin người dùng
+        Map<String, dynamic> userData =
+            userDoc.data() as Map<String, dynamic>; // Thông tin người dùng
 
         // Điều hướng dựa trên vai trò
         if (userRole == 'admin') {
@@ -100,25 +101,25 @@ void showErrorDialog(String errorMessage) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => UserHomePage(userData: userData),
+              // builder: (context) => UserHomePage(userData: userData),
+              builder: (context) => UserMainScreen(),
             ),
           );
         }
       } on FirebaseAuthException catch (e) {
-          String errorMessage;
-          if (e.code == 'user-not-found') {
-            errorMessage = 'Không tìm thấy người dùng với email này.';
-          } else if (e.code == 'wrong-password') {
-            errorMessage = 'Mật khẩu không chính xác.';
-          } else {
-            errorMessage = 'Lỗi: ${e.message}';
-          }
-
-          showErrorDialog(errorMessage);
+        String errorMessage;
+        if (e.code == 'user-not-found') {
+          errorMessage = 'Không tìm thấy người dùng với email này.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Mật khẩu không chính xác.';
+        } else {
+          errorMessage = 'Lỗi: ${e.message}';
         }
+
+        showErrorDialog(errorMessage);
+      }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +249,8 @@ void showErrorDialog(String errorMessage) {
                         onPressed: () {
                           // Add your forgot password logic here
                         },
-                        child: const Text('Quên mật khẩu?', style: TextStyle(fontSize: 12)),
+                        child: const Text('Quên mật khẩu?',
+                            style: TextStyle(fontSize: 12)),
                       ),
                       const Text('|'),
                       TextButton(
@@ -259,9 +261,10 @@ void showErrorDialog(String errorMessage) {
                                 builder: (context) => const RegisterPage()),
                           );
                         },
-                        child: const Text('Bạn chưa có tài khoản? Đăng ký', style: TextStyle(fontSize: 12)),
+                        child: const Text('Bạn chưa có tài khoản? Đăng ký',
+                            style: TextStyle(fontSize: 12)),
                       ),
-                    ], 
+                    ],
                   ),
                   SizedBox(height: screenHeight * 0.02),
 
