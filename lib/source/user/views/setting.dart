@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pbl3/source/login.dart'; // Import màn hình đăng nhập
 
 class SettingsScreen extends StatefulWidget {
@@ -9,35 +8,99 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool isDarkMode = false; // Để lưu trữ trạng thái chế độ tối/sáng
-  bool notificationsEnabled = true; // Để lưu trữ trạng thái thông báo
-  double fontSize = 16.0; // Kích thước font chữ
-  String selectedLanguage = 'vi'; // Mặc định là tiếng Việt
+  // Hàm mở dialog thay đổi mật khẩu
+  void _showChangePasswordDialog() {
+    final TextEditingController _oldPasswordController =
+        TextEditingController();
+    final TextEditingController _newPasswordController =
+        TextEditingController();
+    final TextEditingController _confirmPasswordController =
+        TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Thay đổi mật khẩu'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _oldPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Mật khẩu cũ'),
+              ),
+              TextField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Mật khẩu mới'),
+              ),
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Xác nhận mật khẩu mới'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final oldPassword = _oldPasswordController.text;
+                final newPassword = _newPasswordController.text;
+                final confirmPassword = _confirmPasswordController.text;
 
-  // Hàm tải các cài đặt từ SharedPreferences
-  void _loadSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('isDarkMode') ?? false;
-      notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
-      fontSize = prefs.getDouble('fontSize') ?? 16.0;
-      selectedLanguage = prefs.getString('selectedLanguage') ?? 'vi';
-    });
-  }
+                // Kiểm tra mật khẩu mới và xác nhận mật khẩu mới
+                if (newPassword == confirmPassword) {
+                  try {
+                    User? user = FirebaseAuth.instance.currentUser;
 
-  // Hàm lưu cài đặt vào SharedPreferences
-  void _saveSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDarkMode', isDarkMode);
-    prefs.setBool('notificationsEnabled', notificationsEnabled);
-    prefs.setDouble('fontSize', fontSize);
-    prefs.setString('selectedLanguage', selectedLanguage);
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'Vui lòng đăng nhập trước khi thay đổi mật khẩu')),
+                      );
+                      return; // Dừng lại nếu người dùng chưa đăng nhập
+                    }
+
+                    // Xác thực lại người dùng với mật khẩu cũ
+                    AuthCredential credential = EmailAuthProvider.credential(
+                        email: user.email!, password: oldPassword);
+
+                    // Reauthenticate người dùng
+                    await user.reauthenticateWithCredential(credential);
+
+                    // Cập nhật mật khẩu mới
+                    await user.updatePassword(newPassword);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Đổi mật khẩu thành công')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Đã xảy ra lỗi: $e')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Mật khẩu mới không khớp')),
+                  );
+                }
+
+                Navigator.of(context).pop();
+              },
+              child: Text('Lưu'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Hàm để đăng xuất
@@ -73,84 +136,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Hàm thay đổi ngôn ngữ
-  void _changeLanguage(String languageCode) {
-    setState(() {
-      selectedLanguage = languageCode;
-    });
-    // Lưu ngôn ngữ vào SharedPreferences
-    _saveSettings();
-    // Áp dụng ngôn ngữ cho ứng dụng (cần cài đặt localization)
-    // Chỉ cần cập nhật trạng thái, Flutter sẽ tự động thay đổi ngôn ngữ nếu đã cấu hình localization
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cài đặt'),
-        backgroundColor: Colors.blue,
+        centerTitle: true, // Sử dụng true để căn giữa tiêu đề
+        backgroundColor: const Color.fromARGB(255, 151, 191, 224),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Cài đặt giao diện
+            // Cài đặt chỉnh sửa tài khoản
             ListTile(
-              title: Text('Chế độ giao diện'),
-              subtitle: Text(isDarkMode ? 'Chế độ tối' : 'Chế độ sáng'),
-              trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  setState(() {
-                    isDarkMode = value;
-                  });
-                  _saveSettings();
-                },
-              ),
+              title: Text('Đổi mật khẩu'),
+              leading: Icon(Icons.account_circle),
+              onTap: _showChangePasswordDialog, // Mở dialog thay đổi mật khẩu
             ),
-
-            // Cài đặt thông báo
-            ListTile(
-              title: Text('Nhận thông báo'),
-              subtitle: Text(notificationsEnabled ? 'Bật' : 'Tắt'),
-              trailing: Switch(
-                value: notificationsEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    notificationsEnabled = value;
-                  });
-                  _saveSettings();
-                },
-              ),
-            ),
-
-            // Cài đặt kích thước chữ
-            ListTile(
-              title: Text('Kích thước chữ'),
-              subtitle:
-                  Text('Kích thước hiện tại: ${fontSize.toStringAsFixed(1)}'),
-              trailing: IconButton(
-                icon: Icon(Icons.text_fields),
-                onPressed: () {
-                  // Mở dialog thay đổi kích thước chữ
-                  _showFontSizeDialog();
-                },
-              ),
-            ),
-
-            // Cài đặt ngôn ngữ
-            ListTile(
-              title: Text('Ngôn ngữ'),
-              subtitle:
-                  Text(selectedLanguage == 'vi' ? 'Tiếng Việt' : 'English'),
-              trailing: Icon(Icons.language),
-              onTap: () {
-                // Hiển thị lựa chọn ngôn ngữ
-                _showLanguageDialog();
-              },
-            ),
-
             // Cài đặt đăng xuất
             ListTile(
               title: Text('Đăng xuất'),
@@ -160,69 +164,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  // Hàm để mở dialog thay đổi kích thước chữ
-  void _showFontSizeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Chọn kích thước chữ'),
-          content: Slider(
-            value: fontSize,
-            min: 12.0,
-            max: 24.0,
-            divisions: 12,
-            label: fontSize.toStringAsFixed(1),
-            onChanged: (newSize) {
-              setState(() {
-                fontSize = newSize;
-              });
-            },
-          ),
-          actions: [
-            TextButton(
-              child: Text('Đóng'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Hàm để mở dialog lựa chọn ngôn ngữ
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Chọn ngôn ngữ'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('Tiếng Việt'),
-                onTap: () {
-                  _changeLanguage('vi');
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                title: Text('English'),
-                onTap: () {
-                  _changeLanguage('en');
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

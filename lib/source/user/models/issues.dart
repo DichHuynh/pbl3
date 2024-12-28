@@ -7,6 +7,7 @@ class Issue {
   final String location; // Vị trí sự cố
   final DateTime createdAt; // Thời gian báo cáo
   final String status; // Trạng thái sự cố (pending, resolved, etc.)
+  final String imageUrl; // URL của hình ảnh sự cố
 
   Issue({
     required this.id,
@@ -15,6 +16,7 @@ class Issue {
     required this.location,
     required this.createdAt,
     required this.status,
+    required this.imageUrl,
   });
 
   factory Issue.fromMap(Map<String, dynamic> data, String documentId) {
@@ -23,9 +25,9 @@ class Issue {
       userId: data['userId'],
       description: data['description'],
       location: data['location'],
-      createdAt: (data['createdAt'] as Timestamp)
-          .toDate(), // Chuyển Timestamp thành DateTime
-      status: data['status'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      status: data['status'] ?? 'chưa xử lý',
+      imageUrl: data['imageUrl'] ?? '', // Đảm bảo trường imageUrl không null
     );
   }
 
@@ -35,9 +37,9 @@ class Issue {
       'userId': userId,
       'description': description,
       'location': location,
-      'createdAt':
-          Timestamp.fromDate(createdAt), // Chuyển từ DateTime sang Timestamp
+      'createdAt': Timestamp.fromDate(createdAt),
       'status': status,
+      'imageUrl': imageUrl, // Thêm trường imageUrl vào Map
     };
   }
 }
