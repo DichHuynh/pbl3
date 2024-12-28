@@ -16,9 +16,9 @@ class IssueService {
 
 
   // Lấy danh sách báo cáo sự cố theo userId từ Firestore
-  Stream<List<Issue>> getIssuesByUser(String userId) {
+  Stream<List<Issue>> getIssuesByUser(String techId) {
     return issueCollection
-        .where('userId', isEqualTo: userId) // Lọc theo userId
+        .where('techId', isEqualTo: techId) // Lọc theo userId
         .snapshots() // Lấy dữ liệu trực tiếp khi có thay đổi
         .map((snapshot) => snapshot.docs
             .map((doc) =>
@@ -26,3 +26,7 @@ class IssueService {
             .toList());
   }
 }
+
+// tạo 1 list để lưu data lấy từ getIssue về r hiển thị
+// List[Issue] 
+// widget listview
