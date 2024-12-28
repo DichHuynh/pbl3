@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
+        automaticallyImplyLeading: false, // Bỏ nút mũi tên điều hướng
         actions: [
           IconButton(
             icon: Icon(Icons.notifications, color: Colors.black),

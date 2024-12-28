@@ -60,8 +60,8 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Lỗi'),
-          content: Text(errorMessage),
+          title: const Text('Đăng nhập không thành công!'),
+          content: Text('Email hoặc mật khẩu không đúng.'),
           actions: [
             TextButton(
               onPressed: () {

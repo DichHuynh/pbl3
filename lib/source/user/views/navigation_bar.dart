@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pbl3/source/user/views/home.dart'; // Đảm bảo đã import HomeScreen
-import 'package:pbl3/source/user/views/report.dart'; // Đảm bảo đã import HomeScreen
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pbl3/source/user/views/home.dart';
+import 'package:pbl3/source/user/views/report.dart';
+import 'package:pbl3/source/user/views/setting.dart';
+import 'package:pbl3/source/user/views/history.dart';
 
-import 'package:pbl3/source/user/views/setting.dart'; // Đảm bảo đã import HomeScreen
-import 'package:pbl3/source/user/views/history.dart'; // Đảm bảo đã import HomeScreen
-
-// import 'package:pbl3/views/users/report.dart'; // Đảm bảo đã import HomeScreen
-// import 'package:pbl3/views/users/history.dart'; // Đảm bảo đã import HomeScreen
-// import 'package:pbl3/views/users/notification.dart';
-// import 'package:pbl3/views/users/settings.dart';
 class BottomNavigationBarUser extends StatefulWidget {
   @override
   _BottomNavigationBarUserState createState() =>
@@ -17,27 +13,54 @@ class BottomNavigationBarUser extends StatefulWidget {
 
 class _BottomNavigationBarUserState extends State<BottomNavigationBarUser> {
   int _selectedIndex = 0;
+  String _userId = '';
+  List<Widget> _pages = [];
 
-  final List<Widget> _pages = [
-    HomeScreen(),
-    IssueReportScreen(),
-    IssueHistoryScreen(userId: '12345'), // Thay userId thực tế
-    SettingsScreen(),
-  ];
+  // Lấy userId từ FirebaseAuth
+  Future<void> _getUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _userId = user.uid;
+        _pages = [
+          HomeScreen(),
+          IssueReportScreen(onReportSuccess: _onReportSuccess),
+          IssueHistoryScreen(userId: _userId),
+          SettingsScreen(),
+        ];
+      });
+    }
+  }
 
+  // Xử lý sự kiện khi chọn tab
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  // Điều hướng đến tab lịch sử báo cáo sau khi gửi báo cáo
+  void _onReportSuccess() {
+    setState(() {
+      _selectedIndex = 2; // Chuyển đến tab "Lịch sử"
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserId();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
+      body: _userId.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : IndexedStack(
+              index: _selectedIndex,
+              children: _pages,
+            ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
