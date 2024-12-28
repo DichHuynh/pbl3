@@ -9,7 +9,7 @@ class IssueService {
   final CollectionReference issueCollection =
       FirebaseFirestore.instance.collection('issues');
 
-  // Gửi báo cáo sự cố
+  // Gửi báo cáo sự cố = viết dữ liệu vào Firestore
   Future<void> createIssue(Issue issue) async {
     try {
       await issueCollection.add(issue.toMap());
@@ -18,6 +18,7 @@ class IssueService {
     }
   }
 
+<<<<<<< HEAD
   // Tải ảnh lên Cloudinary và lấy URL ảnh
   Future<String?> uploadImageToCloudinary(Uint8List imageBytes) async {
     final cloudinaryUrl =
@@ -41,6 +42,10 @@ class IssueService {
   }
 
   // Lấy danh sách sự cố của người dùng và sắp xếp theo thời gian (từ mới nhất đến cũ nhất)
+=======
+
+  // Lấy danh sách báo cáo sự cố theo userId từ Firestore
+>>>>>>> e55f003eb209cd7ac6363ecf5bc4be11239cd33d
   Stream<List<Issue>> getIssuesByUser(String userId) {
     return issueCollection
         .where('userId', isEqualTo: userId) // Lọc theo userId

@@ -5,11 +5,17 @@ import 'package:firebase_core/firebase_core.dart';
 
 // package cho flutter và các file khác
 import 'package:flutter/material.dart';
+import 'package:pbl3/source/admin/views/admin_main.dart';
 // import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/user/views/user_main.dart';
 
+<<<<<<< HEAD
 import 'package:pbl3/source/tech/techHome.dart';
+// import 'package:pbl3/source/admin/adminHome.dart';
+=======
+import 'package:pbl3/source/tech/view/tech_main.dart';
 import 'package:pbl3/source/admin/adminHome.dart';
+>>>>>>> 294cfaaf4568310c1e073732cd570bad79e7b306
 import 'package:pbl3/source/signUp.dart';
 
 // widget chính : trang đăng nhậpnhập
@@ -82,20 +88,21 @@ class _LoginPageState extends State<LoginPage> {
             .collection('users')
             .doc(userCredential.user!.uid)
             .get();
-        String userRole = userDoc['role']; // Vai trò người dùng
-        Map<String, dynamic> userData =
-            userDoc.data() as Map<String, dynamic>; // Thông tin người dùng
+        String userRole = userDoc['role'];
+        String userId = userCredential.user!.uid; // Vai trò người dùng
+        // Map<String, dynamic> userData =
+        //     userDoc.data() as Map<String, dynamic>; // Thông tin người dùng
 
         // Điều hướng dựa trên vai trò
         if (userRole == 'admin') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const AdminHomePage()),
+            MaterialPageRoute(builder: (context) => AdminMainScreen(userData: userId)),
           );
         } else if (userRole == 'tech') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const TechHomePage()),
+            MaterialPageRoute(builder: (context) => TechMainScreen()),
           );
         } else {
           Navigator.pushReplacement(

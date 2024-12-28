@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// model của Dương
 class Issue {
   final String id; // ID tự động
   final String userId; // ID người dùng báo cáo
