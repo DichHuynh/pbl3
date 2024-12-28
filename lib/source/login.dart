@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 // import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/user/views/user_main.dart';
 
-import 'package:pbl3/source/tech/techHome.dart';
+import 'package:pbl3/source/tech/view/tech_main.dart';
 import 'package:pbl3/source/admin/adminHome.dart';
 import 'package:pbl3/source/signUp.dart';
 
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
         } else if (userRole == 'tech') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const TechHomePage()),
+            MaterialPageRoute(builder: (context) => TechMainScreen()),
           );
         } else {
           Navigator.pushReplacement(

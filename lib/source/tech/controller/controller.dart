@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/issues.dart';
+import '../model/issue.dart';
 
 class IssueService {
   final CollectionReference issueCollection =
@@ -10,7 +10,7 @@ class IssueService {
     try {
       await issueCollection.add(issue.toMap());
     } catch (e) {
-      throw Exception('Failed to create issue: $e');
+      throw Exception('Failed to update Firebase: $e');
     }
   }
 
