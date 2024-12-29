@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pbl3/source/login%20signup/login.dart';
+import 'package:pbl3/source/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -270,8 +270,8 @@ class SystemSettingsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const LoginPage()),);
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
               },
               child: const Text('Đăng xuất'),
             ),

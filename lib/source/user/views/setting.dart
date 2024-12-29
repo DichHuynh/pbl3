@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pbl3/source/login.dart'; // Import màn hình đăng nhập
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pbl3/source/login%20signup/login.dart'; // Import màn hình đăng nhập
+import 'package:pbl3/source/login.dart'; // Import màn hình đăng nhập
 
 class SettingsScreen extends StatefulWidget {
   @override
