@@ -6,8 +6,9 @@ class Issue {
   final String location;
   final String status;
   final String imageUrl;
-  final DateTime? reportDate;
+  final DateTime? createdAt;
   final DateTime? resolutionDate;
+  final DateTime? deadline;
 
   Issue({
     required this.id,
@@ -15,8 +16,9 @@ class Issue {
     required this.location,
     required this.status,
     required this.imageUrl,
-    this.reportDate,
+    this.createdAt,
     this.resolutionDate,
+    this.deadline,
   });
 
   // Chuyển từ Map sang Issue
@@ -27,11 +29,14 @@ class Issue {
       location: map['location'] ?? '',
       status: map['status'] ?? 'Chưa xử lý',
       imageUrl: map['imageUrl'] ?? '', // Ánh xạ trường imageUrl
-      reportDate: map['reportDate'] != null
-          ? (map['reportDate'] as Timestamp).toDate()
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
           : null, // Chuyển đổi Timestamp thành DateTime
       resolutionDate: map['resolutionDate'] != null
           ? (map['resolutionDate'] as Timestamp).toDate()
+          : null,
+      deadline: map['deadline'] != null
+          ? (map['deadline'] as Timestamp).toDate()
           : null,
     );
   }
@@ -43,9 +48,10 @@ class Issue {
       'location': location,
       'status': status,
       'imageUrl': imageUrl,
-      'reportDate': reportDate != null ? Timestamp.fromDate(reportDate!) : null,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
       'resolutionDate':
           resolutionDate != null ? Timestamp.fromDate(resolutionDate!) : null,
+      'deadline': deadline != null ? Timestamp.fromDate(deadline!) : null,
     };
   }
 }
