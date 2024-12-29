@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pbl3/source/tech/view/tech_main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pbl3/source/tech/view/home.dart';
 import 'package:pbl3/source/tech/view/assign.dart';
 import 'package:pbl3/source/tech/view/history.dart';
@@ -14,18 +15,35 @@ class BottomNavigationBarTech extends StatefulWidget {
 
 class _BottomNavigationBarTechState extends State<BottomNavigationBarTech> {
   int _selectedIndex = 0;
+  String _techId = '';
+  List<Widget> _pages = [];
 
-  final List<Widget> _pages = [
-    TechHomePage(), // home page of tech , nơi hiện thông báo cho tech
-    IssueReportScreen(), // nơi hiện danh sách sự cố cần tech xử lý
-    History(techId: '12345'), // nơi hiện lịch sử xử lý của tech
-    techSetting(), // nơi hiện cài đặt của tech
-  ];
+  //Lấy techId từ FirebaseAuth
+  Future<void> _getTechId() async {
+    User? tech = FirebaseAuth.instance.currentUser;
+    if (tech != null) {
+      setState(() {
+        _techId = tech.uid;
+        _pages = [
+          TechHomePage(),
+          IssueReportScreen(techId: _techId),
+          History(techId: _techId),
+          techSetting(),
+        ];
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getTechId();
   }
 
   @override
@@ -44,7 +62,7 @@ class _BottomNavigationBarTechState extends State<BottomNavigationBarTech> {
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        elevation: 5,
+        elevation: 4,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
