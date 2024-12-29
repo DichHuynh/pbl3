@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
+import 'package:geocoding/geocoding.dart' as geo;
 import '../models/issues.dart';
 import '../controllers/issues.dart';
 import '../views/history.dart'; // Đảm bảo bạn đã tạo màn hình lịch sử báo cáo
@@ -24,6 +25,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
   Uint8List? _image;
   String _userId = '';
   bool _isSubmitting = false; // Biến kiểm tra trạng thái gửi báo cáo
+  String? _locationError; // Biến chứa lỗi vị trí
 
   // Lấy userId từ Firebase
   Future<void> _getUserId() async {
@@ -51,12 +53,42 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
     }
   }
 
+  Future<bool> _checkLocationOnMap(String address) async {
+    try {
+      String locationToCheck = '$address';
+
+      // Sử dụng geocoding để chuyển đổi địa chỉ thành tọa độ
+      List<geo.Location> locations =
+          await geo.locationFromAddress(locationToCheck);
+      return locations.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // Gửi báo cáo
   void _submitReport() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isSubmitting = true; // Bắt đầu quá trình gửi báo cáo
+        _locationError = null; // Reset lỗi vị trí khi gửi báo cáo
       });
+
+      String location = _locationController.text.trim();
+
+      // Kiểm tra vị trí người dùng nhập vào và thêm "Đà Nẵng"
+      bool locationExists = await _checkLocationOnMap(location);
+
+      if (!locationExists) {
+        setState(() {
+          _locationError =
+              'Không tìm thấy vị trí trên bản đồ'; // Lưu lỗi vào biến
+        });
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
 
       String imageUrl = '';
       if (_image != null) {
@@ -67,14 +99,19 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
         id: '',
         userId: _userId,
         description: _descriptionController.text.trim(),
-        location: _locationController.text.trim(),
+        location: location,
         createdAt: DateTime.now(),
-        status: 'Chưa xử lý',
+        status: 'Đang xử lý',
         imageUrl: imageUrl,
       );
 
       try {
+        // Gửi sự cố vào Firestore
         await _issueService.createIssue(issue);
+
+        // Cập nhật lại trạng thái của map sau khi gửi báo cáo thành công
+        widget.onReportSuccess();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Đã báo cáo sự cố thành công!'),
@@ -83,7 +120,13 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
             duration: Duration(seconds: 2),
           ),
         );
-        widget.onReportSuccess(); // Điều hướng sau khi gửi báo cáo thành công
+
+        // Reset thông tin các trường sau khi gửi thành công
+        _descriptionController.clear();
+        _locationController.clear();
+        setState(() {
+          _image = null; // Xóa hình ảnh
+        });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Không thể gửi báo cáo: $e')),
@@ -141,7 +184,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                 TextFormField(
                   controller: _locationController,
                   decoration: InputDecoration(
-                    labelText: 'Vị trí sự cố',
+                    labelText: 'Vị trí sự cố . Ví dụ: 100 ngô sĩ liên đà nẵng',
                     border: OutlineInputBorder(),
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
@@ -153,6 +196,12 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                     return null;
                   },
                 ),
+                SizedBox(height: 8),
+                if (_locationError != null)
+                  Text(
+                    _locationError!,
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
                 SizedBox(height: 16),
 
                 // Tải hình ảnh
@@ -186,7 +235,8 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                     child: _isSubmitting
                         ? CircularProgressIndicator(
                             color: Colors
-                                .white) // Hiển thị loading khi gửi báo cáo
+                                .white, // Hiển thị loading khi gửi báo cáo
+                          )
                         : Text('Gửi Báo Cáo'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 40),

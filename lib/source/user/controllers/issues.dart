@@ -18,7 +18,7 @@ class IssueService {
     }
   }
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
   // Tải ảnh lên Cloudinary và lấy URL ảnh
   Future<String?> uploadImageToCloudinary(Uint8List imageBytes) async {
     final cloudinaryUrl =
@@ -42,10 +42,10 @@ class IssueService {
   }
 
   // Lấy danh sách sự cố của người dùng và sắp xếp theo thời gian (từ mới nhất đến cũ nhất)
-=======
+// =======
 
   // Lấy danh sách báo cáo sự cố theo userId từ Firestore
->>>>>>> e55f003eb209cd7ac6363ecf5bc4be11239cd33d
+// >>>>>>> e55f003eb209cd7ac6363ecf5bc4be11239cd33d
   Stream<List<Issue>> getIssuesByUser(String userId) {
     return issueCollection
         .where('userId', isEqualTo: userId) // Lọc theo userId

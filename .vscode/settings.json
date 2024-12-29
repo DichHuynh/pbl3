@@ -1,4 +1,5 @@
 {
     "cmake.sourceDirectory": "C:/Users/HUY/pbl3/linux",
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "idf.flashType": "UART"
 }
