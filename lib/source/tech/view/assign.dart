@@ -1,13 +1,17 @@
 // lib/views/screens/issue_report.dart
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pbl3/source/user/views/history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../controller/controller.dart';
-import '../model/issue.dart';
+import '../model/Issue.dart';
 
 class IssueReportScreen extends StatefulWidget {
+  final String techId;
+  
+  IssueReportScreen({required this.techId});
   @override
   _IssueReportScreenState createState() => _IssueReportScreenState();
 }
@@ -18,33 +22,6 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
   File? _image;
   final IssueService _issueService = IssueService();
 
-  
-  void _submitReport() async {
-    if(_formKey.currentState!.validate()) {
-      final issue = Issue(
-        id: '',
-        userId: '',
-        description: _noteController.text.trim(),
-        location: '',
-        createdAt: DateTime.now(),
-        status: 'pending',
-        techId: '12345',
-        imageUrl: '',
-        techNote: '',
-      );
-
-      try {
-        await _issueService.createIssue(issue);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Báo cáo thành công!')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Không thể gửi báo cáo: $e')),
-        );
-      }
-    }
-  }
 
   // main widget
   @override
@@ -53,41 +30,74 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
       appBar: AppBar(
         title: Text('Danh sách công việc'),
       ),
-      body: DataTable(
-        columns:[
-          DataColumn(label: Text('STT')),
-          DataColumn(label: Text('Sự cố')),
-          DataColumn(label: Text('Trạng thái')),
-          DataColumn(label: Text('Báo cáo')),
-        ],
-        rows: [
-          DataRow(cells:[
-            DataCell(Text('1')),
-            DataCell(Text('Sự cố 1')), //fetch from firebase later
-            DataCell(Text('Đã xử lý')), //fetch from firebase later
-            DataCell(IconButton(
-              icon: Icon(Icons.report), // nhảy lên mục báo cáocáo
-              onPressed: () {_reportDialog();}
-              )
-            ),
-          ]),
-          DataRow(cells:[
-            DataCell(Text('2')),
-            DataCell(Text('Sự cố 2')),
-            DataCell(Text('Chưa xử lý')),
-            DataCell(IconButton(
-              icon: Icon(Icons.pending), // nhảy lên mục báo cáo
-              onPressed: () {_reportDialog();})),
-          ]),
-          DataRow(cells:[
-            DataCell(Text('3')),
-            DataCell(Text('Sự cố 3')),
-            DataCell(Text('Đang xử lý')),
-            DataCell(IconButton(
-              icon: Icon(Icons.done), // nhảy lên mục báo cáo
-              onPressed: () {_reportDialog();})),
-          ])
-        ],
+      body: StreamBuilder<List<Issue>>(
+        stream: _issueService.getIssuesByTech(widget.techId),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Lỗi khi tải dữ liệu: ${snapshot.error}')
+            );
+          }
+          if( !snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Không có công việc nào.'));
+          }
+
+          final issues = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: issues.length,
+            itemBuilder: (context, index){
+              final issue = issues[index];
+              return Card(
+                margin: EdgeInsets.all(10),
+                child: ListTile(
+                  title: Text(issue.description),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Vị trí: ${issue.location}'),
+                      Text('Thời gian: ${issue.createdAt.toLocal()}'),
+                      Text('Trạng thái: ${issue.status}'),
+                      if(issue.imageUrl.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImagePreviewScreen(imageUrl: issue.imageUrl),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Hình ảnh',
+                              style: TextStyle( 
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                    ],
+                  ),
+                  leading: Icon(Icons.pending_actions_outlined, color: Colors.orange),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit_notifications_outlined, color: Colors.green),
+                    onPressed: () {
+                      _reportDialog();
+                    }
+                  )
+                )
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -99,7 +109,6 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
         final _formKey = GlobalKey<FormState>();
         final _noteController = TextEditingController();
         File? _image;
-
 
         Future<void> _pickImage() async {
           final picker = ImagePicker();
@@ -132,12 +141,19 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                           fit: BoxFit.cover,
                         )
                         : Container(
-                          height: 75,
+                          height: 100,
+                          width: 500,
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(10),
+                            color: const Color.fromARGB(255, 226, 226, 226),
+                            borderRadius: BorderRadius.circular(100),
                           ),
-                          child: Center(child: Text('Tải hình ảnh lên')),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:[
+                              Icon(Icons.add_a_photo, color: const Color.fromARGB(255, 57, 57, 57)),
+                              Text('Tải hình ảnh lên')
+                          ],
+                        ),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -174,6 +190,35 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
       }
     );
   }
+
+  void _submitReport() async {
+    if(_formKey.currentState!.validate()) {
+      final issue = Issue(
+        id: '',
+        userId: '',
+        description: _noteController.text.trim(),
+        location: '',
+        createdAt: DateTime.now(),
+        status: 'pending',
+        techId: '12345',
+        imageUrl: '',
+        techNote: '',
+      );
+
+      try {
+        await _issueService.createIssue(issue);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Báo cáo thành công!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không thể gửi báo cáo: $e')),
+        );
+      }
+    }
+  }
 }
+
+
 
 

@@ -9,13 +9,8 @@ import 'package:pbl3/source/admin/views/admin_main.dart';
 // import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/user/views/user_main.dart';
 
-<<<<<<< HEAD
-import 'package:pbl3/source/tech/techHome.dart';
-// import 'package:pbl3/source/admin/adminHome.dart';
-=======
 import 'package:pbl3/source/tech/view/tech_main.dart';
 import 'package:pbl3/source/admin/adminHome.dart';
->>>>>>> 294cfaaf4568310c1e073732cd570bad79e7b306
 import 'package:pbl3/source/signUp.dart';
 
 // widget chính : trang đăng nhậpnhập
@@ -99,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             context,
             MaterialPageRoute(builder: (context) => AdminMainScreen(userData: userId)),
           );
-        } else if (userRole == 'tech') {
+        } else if (userRole == 'Tech') {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => TechMainScreen()),
