@@ -11,28 +11,32 @@ class Issue{
   final String userId;
   final String techId;
   final String techNote; // ghi chú của kỹ thuật viên
-  final String? imageUrl; // đường dẫn hình ảnhảnh
+  final String imageUrl; // đường dẫn hình ảnhảnh
 
   Issue({
-    this.id = '',
-    this.userId = '', // id của người báo cáo sự cố
-    this.techId = '', // id của kỹ thuật viên xử lý sự cố
-    required this.createdAt, // thời gian báo cáo sự cố
-    this.description = '', // mô tả sự cố
-    this.location = '', // vị trí sự cố
-    required this.status, // cập nhật trạng thái sự cố
-    required this.imageUrl, // hình ảnh sau khi xử lý sự cố
-    required this.techNote, // ghi chú của kỹ thuật viên viên
+    required this.id,
+    required this.createdAt,
+    required this.description,
+    required this.location,
+    required this.status,
+    required this.userId,
+    required this.techId,
+    required this.imageUrl,
+    required this.techNote,
   });
 
   // factory variables into Issue object for storing in Firestore 
   factory Issue.fromMap(Map<String, dynamic> data, String documentId) {
     return Issue(
       id: documentId,
-      createdAt: data['createdAt'],
-      status: data['status'],
-      imageUrl: data['imageUrl'],
-      techNote: data['techNote'],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      description: data['description'] ?? '',
+      location: data['location'] ?? '',
+      status: data['status'] ?? '',
+      userId: data['userId'] ?? '',
+      techId: data['techId'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+      techNote: data['techNote'] ?? '',
     );
   }
 
@@ -44,6 +48,8 @@ class Issue{
       'status': status,
       'userId': userId,
       'techId': techId,
+      'imageUrl': imageUrl,
+      'techNote': techNote,
     };
   }
 }

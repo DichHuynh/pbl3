@@ -18,7 +18,10 @@ class IssueService {
     }
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 22419c3550c723ddcc2d309a48be1f66b48cc60b
   // Tải ảnh lên Cloudinary và lấy URL ảnh
   Future<String?> uploadImageToCloudinary(Uint8List imageBytes) async {
     final cloudinaryUrl =
@@ -43,6 +46,10 @@ class IssueService {
 
   // Lấy danh sách sự cố của người dùng và sắp xếp theo thời gian (từ mới nhất đến cũ nhất)
 
+<<<<<<< HEAD
+=======
+// =======
+>>>>>>> 22419c3550c723ddcc2d309a48be1f66b48cc60b
 
   // Lấy danh sách báo cáo sự cố theo userId từ Firestore
 // >>>>>>> e55f003eb209cd7ac6363ecf5bc4be11239cd33d

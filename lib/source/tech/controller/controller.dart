@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/issue.dart';
+import '../model/Issue.dart';
 
 class IssueService {
   final CollectionReference issueCollection =
@@ -15,8 +15,8 @@ class IssueService {
   }
 
 
-  // Lấy danh sách báo cáo sự cố theo userId từ Firestore
-  Stream<List<Issue>> getIssuesByUser(String techId) {
+  // Lấy danh sách báo cáo sự cố theo techId từ Firestore
+  Stream<List<Issue>> getIssuesByTech(String techId) {
     return issueCollection
         .where('techId', isEqualTo: techId) // Lọc theo userId
         .snapshots() // Lấy dữ liệu trực tiếp khi có thay đổi
@@ -27,6 +27,7 @@ class IssueService {
   }
 }
 
+  // Lấy danh sách sự cố của người dùng và sắp xếp theo thời gian (từ mới nhất đến cũ nhất)
 // tạo 1 list để lưu data lấy từ getIssue về r hiển thị
 // List[Issue] 
 // widget listview
