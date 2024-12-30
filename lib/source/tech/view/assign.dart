@@ -7,11 +7,15 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../controller/controller.dart';
 import '../model/Issue.dart';
+import 'package:geocoding/geocoding.dart' as geo;
+import 'dart:typed_data';
+
 
 class IssueReportScreen extends StatefulWidget {
   final String techId;
   
   IssueReportScreen({required this.techId});
+
   @override
   _IssueReportScreenState createState() => _IssueReportScreenState();
 }
@@ -19,12 +23,13 @@ class IssueReportScreen extends StatefulWidget {
 class _IssueReportScreenState extends State<IssueReportScreen> {
   final _formKey = GlobalKey<FormState>();
   final _noteController = TextEditingController();
-  File? _image;
+  final _image = '';
   final IssueService _issueService = IssueService();
+  bool _isSubmitting = false; // Biến kiểm tra trạng thái gửi báo cáo
+  
 
 
   // main widget
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +66,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                       Text('Vị trí: ${issue.location}'),
                       Text('Thời gian: ${issue.createdAt.toLocal()}'),
                       Text('Trạng thái: ${issue.status}'),
-                      if(issue.imageUrl.isNotEmpty)
+                      if(issue.imageUrl != null && issue.imageUrl!.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: GestureDetector(
@@ -69,7 +74,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ImagePreviewScreen(imageUrl: issue.imageUrl),
+                                  builder: (context) => ImagePreviewScreen(imageUrl: issue.imageUrl!),
                                 ),
                               );
                             },
@@ -193,27 +198,56 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
 
   void _submitReport() async {
     if(_formKey.currentState!.validate()) {
+      setState(() {
+        _isSubmitting = true;
+      });
+
+      String imageUrl = '';
+      if(_image != null) {
+        imageUrl = await _issueService.uploadImageToCloudinary(_image) ?? '';
+      }
+
       final issue = Issue(
         id: '',
         userId: '',
-        description: _noteController.text.trim(),
+        description: '',
         location: '',
         createdAt: DateTime.now(),
-        status: 'pending',
-        techId: '12345',
-        imageUrl: '',
-        techNote: '',
+        status: 'done',
+        techId: widget.techId,
+        imageUrl: imageUrl,
+        techNote: _noteController.text.trim(),
       );
 
+      if (_image == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vui lòng tải lên hình ảnh.')),
+        );
+        return;
+      }
+
+      if (widget.techId == null || widget.techId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không thể xác định kỹ thuật viên.')),
+        );
+        return;
+      }
+
+
       try {
-        await _issueService.createIssue(issue);
+        await _issueService.updateIssue(issue.id, issue);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Báo cáo thành công!')),
         );
+        Navigator.of(context).pop();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Không thể gửi báo cáo: $e')),
         );
+      } finally {
+        setState((){
+          _isSubmitting = false;
+        });
       }
     }
   }
