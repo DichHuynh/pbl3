@@ -101,7 +101,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
         description: _descriptionController.text.trim(),
         location: location,
         createdAt: DateTime.now(),
-        status: 'Đang xử lý',
+        status: 'Chưa xử lý',
         imageUrl: imageUrl,
       );
 
