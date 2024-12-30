@@ -13,7 +13,7 @@ import 'package:pbl3/source/user/views/user_main.dart';
 // import 'package:pbl3/source/admin/adminHome.dart';
 
 import 'package:pbl3/source/tech/view/tech_main.dart';
-import 'package:pbl3/source/admin/adminHome.dart';
+
 import 'package:pbl3/source/signUp.dart';
 
 // widget chính : trang đăng nhậpnhập

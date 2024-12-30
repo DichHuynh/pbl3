@@ -139,6 +139,7 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tài khoản cá nhân"),
+        centerTitle: true,
         backgroundColor: Colors.blue,
         elevation: 0,
       ),

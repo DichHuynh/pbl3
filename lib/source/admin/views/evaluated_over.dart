@@ -2,26 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:pbl3/source/admin/controller/issue_controller.dart';
 import 'package:pbl3/source/admin/model/issue_model.dart';
 
-class AssignTask extends StatefulWidget {
-  const AssignTask({super.key});
-
-  @override
-  _AssignTaskState createState() => _AssignTaskState();
-}
-
-class _AssignTaskState extends State<AssignTask> {
-  final IssueController _controller = IssueController();
-
+class OverdueTask extends StatelessWidget {
+  final _controller = IssueController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Phân công công việc'),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 40, 149, 238),
-        foregroundColor: Colors.white,),
+      backgroundColor: Colors.white,
       body: FutureBuilder<List<Issue>>(
-        future: _controller.getIssues(),
+        future: _controller.getOverdueIssues(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -35,6 +23,16 @@ class _AssignTaskState extends State<AssignTask> {
 
           final issues = snapshot.data!;
 
+          // Sắp xếp sự cố chưa đánh giá lên đầu
+          issues.sort((a, b) {
+            if (a.evaluation == null && b.evaluation != null) {
+              return -1; // `a` chưa đánh giá => lên đầu
+            } else if (a.evaluation != null && b.evaluation == null) {
+              return 1; // `b` chưa đánh giá => lên đầu
+            }
+            return 0; // Giữ nguyên vị trí nếu cả hai đều giống nhau về đánh giá
+          });
+
           return ListView.builder(
             itemCount: issues.length,
             itemBuilder: (context, index) {
@@ -43,6 +41,7 @@ class _AssignTaskState extends State<AssignTask> {
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
                       isThreeLine: true,
@@ -68,25 +67,104 @@ class _AssignTaskState extends State<AssignTask> {
                           Text("Vị trí: ${issue.location}"),
                           if (issue.createdAt != null)
                             Text("Ngày báo cáo: ${issue.createdAt!.toLocal()}"),
+                          if (issue.resolutionDate != null)
+                            Text(
+                              "Ngày xử lý: ${issue.resolutionDate!.toLocal()}",
+                              style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          Text("Người xử lý: ${issue.techName}"),
                         ],
                       ),
-                      trailing: Text(
-                        issue.status,
-                        style: TextStyle(
-                          color: issue.status == "Đang xử lý"
-                                  ? Colors.orange // Màu cam cho "Đang xử lý"
-                                  : Colors.red, // Màu đỏ cho "Chưa xử lý"
-                          fontWeight: FontWeight.bold,
+                      trailing: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          issue.imageUrlAfter ?? '',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.broken_image, size: 50);
+                          },
                         ),
                       ),
                     ),
-                   Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                    // Phần đánh giá có thể sổ ra
+                    ExpansionTile(
+                      title: const Text(
+                        'Đánh giá công việc',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      leading: const Icon(Icons.star, color: Colors.amber),
+                      children: [
+                        if (issue.evaluation != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.star, color: Colors.amber),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                        'Chất lượng: ${issue.evaluation!.qualityRating}/5'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.access_time,
+                                        color: Colors.green),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                        'Thời gian: ${issue.evaluation!.timeRating}/5'),
+                                  ],
+                                ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.comment,
+                                        color: Colors.blue),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Nhận xét: ${issue.evaluation!.comment}',
+                                        style: const TextStyle(fontSize: 14),
+                                        softWrap: true, // Cho phép ngắt dòng
+                                        overflow: TextOverflow
+                                            .visible, // Hiển thị đầy đủ nội dung, không cắt bớt
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  'Cập nhật lúc: ${issue.evaluation!.updatedAt ?? 'Không xác định'}',
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (issue.evaluation == null)
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              'Chưa có đánh giá cho sự cố này.',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                          ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
                           _assignTask(context, issue);
                         },
-                        child: const Text('Phân công nhân sự'),
+                        child: const Text('Phân công lại'),
                       ),
                     ),
                   ],

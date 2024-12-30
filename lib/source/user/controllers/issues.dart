@@ -45,6 +45,7 @@ class IssueService {
 
 
   // Lấy danh sách báo cáo sự cố theo userId từ Firestore
+// >>>>>>> e55f003eb209cd7ac6363ecf5bc4be11239cd33d
 
   Stream<List<Issue>> getIssuesByUser(String userId) {
     return issueCollection

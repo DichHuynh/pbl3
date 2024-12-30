@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pbl3/source/admin/addTechnician.dart';
 import 'package:pbl3/source/admin/controller/account_controller.dart';
 import 'package:pbl3/source/admin/model/tech_model.dart';
+import 'package:pbl3/source/admin/views/add_tech.dart';
 
 class TechnicalAccountsTab extends StatelessWidget {
   final AccountController controller = AccountController();
@@ -134,7 +134,7 @@ class TechnicalAccountsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quản lý Kỹ thuật viên'),
+        title: Text('Quản lý Kỹ thuật viên'),
       ),
       body: StreamBuilder<List<Technician>>(
         stream: controller.getTechniciansStream(),

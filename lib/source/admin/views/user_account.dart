@@ -90,7 +90,7 @@ class UserAccountsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quản lý Người dùng'),
+        title: Text('Quản lý Người dùng'),
       ),
       body: StreamBuilder<List<AccountModel>>(
         stream: _userController.getUsersStream(),

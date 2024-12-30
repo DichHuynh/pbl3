@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/issues.dart';
+import './map.dart'; // Đảm bảo bạn import đúng màn hình bản đồ
 
 class HomeScreen extends StatelessWidget {
+  final CollectionReference issuesCollection =
+      FirebaseFirestore.instance.collection('issues');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,109 +19,66 @@ class HomeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false, // Bỏ nút mũi tên điều hướng
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.black),
+            icon: Icon(Icons.map, color: Colors.black),
             onPressed: () {
-              // Chuyển đến màn hình thông báo
+              // Điều hướng tới màn hình bản đồ
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MapScreen(), // Mở màn hình bản đồ
+                ),
+              );
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thông báo tình trạng giao thông
-            Container(
-              margin: const EdgeInsets.only(bottom: 20.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.orange.shade200),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/warning.png', // Đảm bảo thêm hình ảnh này vào thư mục assets
-                    width: 40,
-                    height: 40,
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Cảnh báo giao thông',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Khu vực A có sự cố hoặc công trình thi công. Hãy cẩn thận khi tham gia giao thông!',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: StreamBuilder(
+        stream:
+            issuesCollection.orderBy('createdAt', descending: true).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-            // Bản đồ tình trạng giao thông
-            Container(
-              height: 200,
-              margin: const EdgeInsets.only(bottom: 20.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.blueGrey[50],
-              ),
-              child: Center(
-                child: Text(
-                  'Bản đồ giao thông\n(Đang phát triển)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.blueGrey),
+          if (snapshot.hasError) {
+            return Center(child: Text('Lỗi khi tải dữ liệu'));
+          }
+
+          final data = snapshot.requireData;
+
+          if (data.size == 0) {
+            return Center(child: Text('Không có sự cố nào'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemCount: data.size,
+            itemBuilder: (context, index) {
+              final issue = Issue.fromMap(
+                  data.docs[index].data() as Map<String, dynamic>,
+                  data.docs[index].id);
+
+              return Card(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                child: ListTile(
+                  leading: issue.imageUrl.isNotEmpty
+                      ? Image.network(issue.imageUrl,
+                          width: 50, height: 50, fit: BoxFit.cover)
+                      : Icon(Icons.report, color: Colors.redAccent, size: 50),
+                  title: Text(issue.description),
+                  subtitle: Text(
+                      'Vị trí: ${issue.location}\nTrạng thái: ${issue.status}'),
+                  onTap: () {
+                    // Xử lý khi nhấn vào một sự cố
+                  },
                 ),
-              ),
-            ),
-
-            // Báo cáo sự cố
-            ElevatedButton.icon(
-              onPressed: () {
-                // Điều hướng đến trang báo cáo sự cố
-              },
-              icon: Icon(Icons.report_problem, color: Colors.white),
-              label: Text('Báo cáo sự cố'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                padding: EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-
-            SizedBox(height: 20),
-
-            // Thông tin thêm
-            Text(
-              'Thông tin chi tiết:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              '- Các tuyến đường đang gặp sự cố.\n'
-              '- Công trình thi công hoặc sửa chữa hạ tầng.\n'
-              '- Đề xuất lộ trình an toàn.',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-            ),
-          ],
-        ),
+              );
+            },
+          );
+        },
       ),
     );
   }
