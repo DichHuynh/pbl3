@@ -190,12 +190,15 @@ void _assignTask(BuildContext context, Issue issue) async {
       builder: (context) {
         String? selectedTechnicianId;
         String? selectedTechnicianName;
+        DateTime? selectedDeadline; // Thêm biến DateTime để lưu deadline
+
         return AlertDialog(
           title: const Text('Phân công kỹ thuật viên'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Hiển thị danh sách kỹ thuật viên
                 ...technicians.map((technician) {
                   return ListTile(
                     leading: CircleAvatar(
@@ -212,6 +215,7 @@ void _assignTask(BuildContext context, Issue issue) async {
                     },
                   );
                 }).toList(),
+                // Chọn deadline
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: TextField(
@@ -231,9 +235,12 @@ void _assignTask(BuildContext context, Issue issue) async {
                         lastDate: DateTime(2100), // Ngày cuối cùng có thể chọn
                       );
                       if (pickedDate != null) {
+                        // Format và hiển thị ngày chọn trong TextField
                         deadlineController.text = pickedDate
+                            .toLocal()
                             .toString()
                             .split(' ')[0]; // Format YYYY-MM-DD
+                        selectedDeadline = pickedDate; // Lưu lại DateTime chọn
                       }
                     },
                   ),
@@ -250,7 +257,7 @@ void _assignTask(BuildContext context, Issue issue) async {
               onPressed: () async {
                 if (selectedTechnicianId == null ||
                     selectedTechnicianName == null ||
-                    deadlineController.text.isEmpty) {
+                    selectedDeadline == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content:
@@ -259,11 +266,12 @@ void _assignTask(BuildContext context, Issue issue) async {
                   return;
                 }
                 try {
+                  // Gọi phương thức phân công với DateTime
                   await _controller.assignTask(
                     technicianId: selectedTechnicianId!,
                     technicianName: selectedTechnicianName!,
                     issueId: issue.id,
-                    deadline: deadlineController.text,
+                    deadline: selectedDeadline!, // Truyền DateTime vào đây
                   );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(

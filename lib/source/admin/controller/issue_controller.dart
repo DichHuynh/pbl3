@@ -89,7 +89,7 @@ class IssueController {
     required String issueId,
     required String technicianId,
     required String technicianName,
-    required String deadline,
+    required DateTime deadline,
   }) async {
     try {
       final issueRef = _firestore.collection('issues').doc(issueId);
@@ -97,7 +97,7 @@ class IssueController {
       await issueRef.update({
         'techId': technicianId,
         'techName': technicianName,
-        'deadline': deadline,
+        'deadline': Timestamp.fromDate(deadline),
         'status': 'Đang xử lý',
       });
     } catch (e) {

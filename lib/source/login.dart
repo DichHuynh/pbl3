@@ -9,21 +9,9 @@ import 'package:pbl3/source/admin/views/admin_main.dart';
 // import 'package:pbl3/source/user/userHome.dart';
 import 'package:pbl3/source/user/views/user_main.dart';
 
-<<<<<<< HEAD
-
-=======
-// import 'package:pbl3/source/tech/techHome.dart';
->>>>>>> 22419c3550c723ddcc2d309a48be1f66b48cc60b
 // import 'package:pbl3/source/admin/adminHome.dart';
 
 import 'package:pbl3/source/tech/view/tech_main.dart';
-<<<<<<< HEAD
-=======
-import 'package:pbl3/source/admin/adminHome.dart';
-
-import 'package:pbl3/source/tech/view/tech_main.dart';
-import 'package:pbl3/source/admin/adminHome.dart';
->>>>>>> 22419c3550c723ddcc2d309a48be1f66b48cc60b
 
 import 'package:pbl3/source/signUp.dart';
 
