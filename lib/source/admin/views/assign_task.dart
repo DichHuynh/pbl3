@@ -11,6 +11,13 @@ class AssignTask extends StatefulWidget {
 
 class _AssignTaskState extends State<AssignTask> {
   final IssueController _controller = IssueController();
+  late Future<List<Issue>> _issuesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _issuesFuture = _controller.getIssues();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,7 @@ class _AssignTaskState extends State<AssignTask> {
         foregroundColor: Colors.white,
       ),
       body: FutureBuilder<List<Issue>>(
-        future: _controller.getIssues(),
+        future: _issuesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
