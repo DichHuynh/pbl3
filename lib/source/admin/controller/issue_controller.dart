@@ -6,7 +6,7 @@ class IssueController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Lấy danh sách sự cố từ Firestore
-  Future<List<Issue>> getIssues() async {
+  Future<List<Issue>>getIssues() async {
     try {
       final snapshot = await _firestore
           .collection('issues')

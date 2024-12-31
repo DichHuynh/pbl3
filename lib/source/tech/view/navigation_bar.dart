@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pbl3/source/tech/view/tech_main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:pbl3/source/tech/view/home.dart';
 import 'package:pbl3/source/tech/view/assign.dart';
 import 'package:pbl3/source/tech/view/history.dart';
 import 'package:pbl3/source/tech/view/setting.dart';
+import 'package:pbl3/source/user/views/home.dart';
 
 
 class BottomNavigationBarTech extends StatefulWidget {
@@ -25,9 +25,9 @@ class _BottomNavigationBarTechState extends State<BottomNavigationBarTech> {
       setState(() {
         _techId = tech.uid;
         _pages = [
-          TechHomePage(),
+          HomeScreen(),
           IssueReportScreen(techId: _techId),
-          History(techId: _techId),
+          HistoryScreen(techId: _techId),
           techSetting(),
         ];
       });

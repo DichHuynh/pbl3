@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../controller/controller.dart';
 import '../model/Issue.dart';
-import 'package:geocoding/geocoding.dart' as geo;
 import 'dart:typed_data';
 
 
@@ -21,13 +20,7 @@ class IssueReportScreen extends StatefulWidget {
 }
 
 class _IssueReportScreenState extends State<IssueReportScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _noteController = TextEditingController();
-  final _image = '';
   final IssueService _issueService = IssueService();
-  bool _isSubmitting = false; // Biến kiểm tra trạng thái gửi báo cáo
-  
-
 
   // main widget
   Widget build(BuildContext context) {
@@ -95,7 +88,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
                   trailing: IconButton(
                     icon: Icon(Icons.edit_notifications_outlined, color: Colors.green),
                     onPressed: () {
-                      _reportDialog();
+                      _reportDialog(context, issue);
                     }
                   )
                 )
@@ -106,153 +99,97 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
       ),
     );
   }
-
-  void _reportDialog(){
-    showDialog(
-      context: context,
-      builder: (context) {
-        final _formKey = GlobalKey<FormState>();
-        final _noteController = TextEditingController();
-        File? _image;
-
-        Future<void> _pickImage() async {
-          final picker = ImagePicker();
-          final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-          if (pickedFile != null) {
-            setState(() {
-              _image = File(pickedFile.path);
-            });
-          }
-        }
-        
-        return AlertDialog(
-          title: Text('Báo cáo hoàn thành xử lý sự cố'),
-          content: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column (
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 15),
-                  GestureDetector(
-                    onTap: () async {
-                      await _pickImage();
-                      setState(() {}); // rebuild the widget to display the image
-                    },
-                    child: _image != null
-                        ? Image.file(
-                          _image!,
-                          height: 75,
-                          fit: BoxFit.cover,
-                        )
-                        : Container(
-                          height: 100,
-                          width: 500,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 226, 226, 226),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children:[
-                              Icon(Icons.add_a_photo, color: const Color.fromARGB(255, 57, 57, 57)),
-                              Text('Tải hình ảnh lên')
-                          ],
-                        ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      TextFormField(
-                      controller: _noteController,
-                      decoration: InputDecoration(
-                        labelText: 'Ghi chú',
-                        border:OutlineInputBorder(),
-                      ), maxLines: 3,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng nhập ghi chú';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ),
-            actions:[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: _submitReport,
-                child: Text('Cập nhật'),
-              ),
-            ],
-        );
-      }
-    );
-  }
-
-  void _submitReport() async {
-    if(_formKey.currentState!.validate()) {
-      setState(() {
-        _isSubmitting = true;
-      });
-
-      String imageUrl = '';
-      if(_image != null) {
-        imageUrl = await _issueService.uploadImageToCloudinary(_image) ?? '';
-      }
-
-      final issue = Issue(
-        id: '',
-        userId: '',
-        description: '',
-        location: '',
-        createdAt: DateTime.now(),
-        status: 'done',
-        techId: widget.techId,
-        imageUrl: imageUrl,
-        techNote: _noteController.text.trim(),
-      );
-
-      if (_image == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Vui lòng tải lên hình ảnh.')),
-        );
-        return;
-      }
-
-      if (widget.techId == null || widget.techId.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Không thể xác định kỹ thuật viên.')),
-        );
-        return;
-      }
-
-
-      try {
-        await _issueService.updateIssue(issue.id, issue);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Báo cáo thành công!')),
-        );
-        Navigator.of(context).pop();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Không thể gửi báo cáo: $e')),
-        );
-      } finally {
-        setState((){
-          _isSubmitting = false;
-        });
-      }
-    }
-  }
 }
 
+void _reportDialog(BuildContext context, Issue issue) async {
+  final TextEditingController noteController = TextEditingController();
+  final _controller = IssueService();
+  Uint8List? selectedImageBytes; // Lưu trữ dữ liệu ảnh
 
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Cập nhật báo cáo xử lý'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              // Thêm ghi chú
+              TextFormField(
+                controller: noteController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Ghi chú xử lý',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Chọn hình ảnh
+              TextField(
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Hình ảnh đã chọn',
+                  border: OutlineInputBorder(),
+                  suffixIcon: Icon(Icons.image),
+                ),
+                onTap: () async {
+                  // Mở trình chọn ảnh
+                  selectedImageBytes = await _controller.pickImage();
+                  if (selectedImageBytes != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Đã chọn ảnh thành công!')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Không thể chọn ảnh')),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Đóng'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (noteController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Vui lòng nhập ghi chú'),
+                  ),
+                );
+                return;
+              }
+
+              try {
+                // Gọi hàm updateIssue với dữ liệu ảnh
+                await _controller.updateIssue(
+                  issueId: issue.id,
+                  notes: noteController.text,
+                  imageBytes: selectedImageBytes,
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Cập nhật thành công')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Cập nhật thất bại: $e')),
+                );
+              }
+            },
+            child: const Text('Cập nhật'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
 
